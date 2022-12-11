@@ -17,7 +17,3 @@ def search_problem(query: str) -> Problem:
     response.raise_for_status()
 
     return Problem.load_json(json=response.json())
-
-
-if __name__ == "__main__":
-    search_problem("1000")
