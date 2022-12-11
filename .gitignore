@@ -7,3 +7,6 @@
 
 # log file
 /error.log
+
+# temp folder
+/temp/*
