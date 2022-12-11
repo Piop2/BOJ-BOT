@@ -1,9 +1,10 @@
 import requests
 
 from boj.problem import Problem
+from boj.error import BOJApiError
 
 
-def search_problem(problem_id: int) -> dict:
+def search_problem(problem_id: int) -> Problem:
     """
     ID로 문제 가져오기
     :param problem_id: 문제 ID
@@ -14,6 +15,12 @@ def search_problem(problem_id: int) -> dict:
     headers = {"Content-Type": "application/json"}
 
     response = requests.get(url=url, params=params, headers=headers)
-    response.raise_for_status()
 
-    return Problem.load_json(json=response.json())
+    status_code = response.status_code
+    match status_code:
+        case 200:
+            return Problem.load_json(json=response.json())
+        case 404:
+            raise BOJApiError.ProblemApiError.ProblemNotExistError(f"Problem ID '{problem_id}' does not exist")
+        case _:
+            raise BOJApiError.ProblemApiError(f"unexpected error: status code: {status_code}")
