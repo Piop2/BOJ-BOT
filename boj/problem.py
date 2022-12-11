@@ -17,14 +17,14 @@ class Problem:
             average_tries: int,
             ko_shorts: list[str, ...],
     ):
-        self.problem_id = problem_id
-        self.title_ko = title_ko
+        self.id = problem_id
+        self.title = title_ko
         self.is_solvable = is_solvable
         self.is_partial = is_partial
         self.accepted_user_count = accepted_user_count
         self.level = level
         self.average_tries = average_tries
-        self.ko_shorts = ko_shorts
+        self.shorts = ko_shorts
 
     @classmethod
     def load_json(cls, json: dict):
@@ -58,5 +58,5 @@ class Problem:
         return get_rank(level=self.level)
 
     @property
-    def problem_url(self) -> str:
-        return get_problem_url(problem_id=self.problem_id)
+    def url(self) -> str:
+        return get_problem_url(problem_id=self.id)

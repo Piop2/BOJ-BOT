@@ -1,0 +1,26 @@
+# DISCORD BOT TOKEN
+token="MTA1MDQ5NTAyNzk3MDg1NTAwMw.G1EyqL.2RatMEAbNrqAKore3y2EqyvLklSoNcuM3TPslg"
+
+# presence: bot status, activity which can see in discord
+[presence]
+    [presence.activity]
+    name = "문제 풀이"
+    # Activity.type
+    # 1: unknown
+    # 2: playing
+    # 3: streaming
+    # 4: listening
+    # 5: watching
+    # 6: custom
+    # 7: competing
+    type = 4
+
+    [presence.status]
+    # Status
+    # 1: online
+    # 2: offline
+    # 3: idle
+    # 5: do not disturb
+    # 6: invisible
+    type = 4
+
