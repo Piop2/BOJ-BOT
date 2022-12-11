@@ -7,14 +7,14 @@ from discord.ext import commands
 from config.config import conf
 from utils.logger import get_logger
 
-
 root_log = get_logger("root")
+
 
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=Intents.default(), sync_command=True)
 
-        self.initial_extension = ["cogs.problem"]
+        self.initial_extension = ["cogs.problem", "cogs.problem_img"]
 
     async def setup_hook(self):
         for ext in self.initial_extension:
