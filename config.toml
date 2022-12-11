@@ -5,22 +5,22 @@ token = ""
 [presence]
     [presence.activity]
     name = ""
-    # Activity.type
-    # 1: unknown
-    # 2: playing
-    # 3: streaming
-    # 4: listening
-    # 5: watching
-    # 6: custom
-    # 7: competing
+    # activity.type
+    #  1: unknown
+    #  2: playing
+    #  3: streaming
+    #  4: listening
+    #  5: watching
+    #  6: custom
+    #  7: competing
     type = 1
 
     [presence.status]
-    # Status
-    # 1: online
-    # 2: offline
-    # 3: idle
-    # 5: do not disturb
-    # 6: invisible
+    # status.type
+    #  1: online
+    #  2: offline
+    #  3: idle
+    #  4: do not disturb
+    #  5: invisible
     type = 1
 
