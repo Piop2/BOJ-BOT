@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "formatters": {
+    "simple": {
+      "format": "%(levelname)s %(name)s: %(message)s"
+    },
+    "logFile": {
+      "format": "%(asctime)s %(levelname)s %(name)s: %(message)s ( %(filename)s : %(lineno)d )"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "simple",
+      "level": "DEBUG"
+    },
+    "logFile": {
+      "class": "logging.FileHandler",
+      "filename": "log/error.log",
+      "formatter": "logFile",
+      "level": "ERROR"
+    }
+  },
+  "root": {
+    "handlers": [
+      "console",
+      "logFile"
+    ],
+    "level": "INFO"
+  },
+  "loggers": {
+    "cmd.problem": {
+      "level": "INFO"
+    }
+  }
+}

@@ -11,6 +11,10 @@ from discord.ext import commands
 
 from boj.api.problem import search_problem
 from boj.error import BOJApiError
+from utils.logger import get_logger
+
+
+problem_log = get_logger("cmd.problem")
 
 
 class SearchProblem(commands.Cog):
@@ -24,8 +28,10 @@ class SearchProblem(commands.Cog):
             problem = search_problem(problem_id=problem_id)
         except BOJApiError.ProblemApiError.ProblemNotExistError:
             await interaction.response.send_message(f"ERROR problem id '{problem_id}' does not exist", ephemeral=False)
+            problem_log.warning(f"problem does not exist: {problem_id}")
         else:
             await interaction.response.send_message(f"{problem.problem_id}.{problem.title_ko}: {problem.rank}", ephemeral=False)
+            problem_log.info(f"problem found: {problem_id}")
         return
 
 
