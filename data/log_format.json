@@ -16,7 +16,7 @@
     },
     "logFile": {
       "class": "logging.FileHandler",
-      "filename": "log/error.log",
+      "filename": "error.log",
       "formatter": "logFile",
       "level": "ERROR"
     }
