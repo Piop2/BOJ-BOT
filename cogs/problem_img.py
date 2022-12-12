@@ -33,7 +33,7 @@ class SearchProblemImg(commands.Cog):
             problem_log.warning(f"problem does not exist: {problem_id}")
             return
 
-        make_problem_thumbnail()
+        make_problem_thumbnail(problem=problem)
         file = File("temp/problem_thumbnail.png", filename="test_thumbnail.png")
 
         embed = Embed(title="보러가기", url=problem.url)
