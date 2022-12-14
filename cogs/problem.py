@@ -8,12 +8,12 @@ int problem_id: BOJ 에 등록된 문제 id
 from discord import app_commands
 from discord.ext import commands
 from discord import Embed
+from discord import File
 from discord import Interaction
 
 from boj.api.problem import search_problem
 from boj.error import BOJApiError
 from utils.logger import get_logger
-
 
 problem_log = get_logger("cmd.problem")
 
@@ -32,11 +32,14 @@ class SearchProblem(commands.Cog):
             problem_log.warning(f"problem does not exist: {problem_id}")
             return
 
+        rank_icon = File(f"resource/rank/{problem.level}.png", filename=f"level_{problem.level}.png")
+
         embed = Embed(title=f"{problem.id}. {problem.title}", url=problem.url)
-        embed.set_author(name=problem.rank , url=f"https://static.solved.ac/tier_small/{problem.level}.svg")
+        embed.set_author(name=problem.rank)
+        embed.set_thumbnail(url=f"attachment://level_{problem.level}.png")
         embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
-        await interaction.response.send_message(embed = embed, ephemeral=False)
+        await interaction.response.send_message(embed=embed, file=rank_icon, ephemeral=False)
         problem_log.info(f"problem found: {problem_id}")
         return
 
