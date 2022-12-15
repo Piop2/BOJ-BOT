@@ -28,20 +28,22 @@ def _get_id_image(problem_id):
 
 def _get_title_image(problem_title):
     title_font = pygame.font.Font(FONT_FILE, 150)
+    if title_font.size(problem_title)[0] > 930:
+        title_font = pygame.font.Font(FONT_FILE, 100)
+
     title_image = title_font.render(problem_title, True, (0, 0, 0))
     return title_image
 
+
 def _get_tag_image(problem_tags):
     tag_font = pygame.font.Font(FONT_FILE, 40)
-    tag_image = tag_font.render("", True, (100, 100, 100))
+    text = ""
     for i in range(1, len(problem_tags) + 1):
         text = " ".join([f"#{i}" for i in problem_tags[:i]])
-        tag_image = tag_font.render(text, True, (100, 100, 100))
-        if tag_image.get_width() > 930:
+        if tag_font.size(text)[0] > 930:
             text = f'{" ".join([f"#{i}" for i in problem_tags[:i - 1]])} ...'
-            tag_image = tag_font.render(text, True, (100, 100, 100))
-            return tag_image
-    return tag_image
+            return tag_font.render(text, True, (100, 100, 100))
+    return tag_font.render(text, True, (100, 100, 100))
 
 
 def make_problem_thumbnail(problem: Problem):
@@ -60,7 +62,3 @@ def make_problem_thumbnail(problem: Problem):
     pygame.draw.line(surf, (0, 0, 0), (50, 480), (1230, 480), 5)
     pygame.image.save(surf, SAVE_PATH)
     return surf
-
-
-# if __name__ == '__main__':
-#     make_problem_thumbnail(problem=Problem(10000, "TITLE", True, True, 0, 0, 0, []))
