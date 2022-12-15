@@ -12,7 +12,7 @@ from discord import File
 from discord import Interaction
 
 from boj.api.problem import search_problem
-from boj.error import BOJApiError
+from boj.error import SolvedAcApiError
 from utils.logger import get_logger
 
 problem_log = get_logger("cmd.problem")
@@ -27,7 +27,7 @@ class SearchProblem(commands.Cog):
     async def search(self, interaction: Interaction, problem_id: int) -> None:
         try:
             problem = search_problem(problem_id=problem_id)
-        except BOJApiError.ProblemApiError.ProblemNotExistError:
+        except SolvedAcApiError.ProblemApiError.ProblemNotExistError:
             await interaction.response.send_message(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
             )

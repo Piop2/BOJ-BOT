@@ -12,7 +12,7 @@ from discord import Interaction
 from discord import File
 
 from boj.api.problem import search_problem
-from boj.error import BOJApiError
+from boj.error import SolvedAcApiError
 from utils.logger import get_logger
 from modules.image import make_problem_thumbnail
 
@@ -28,7 +28,7 @@ class SearchProblemImg(commands.Cog):
     async def search(self, interaction: Interaction, problem_id: int) -> None:
         try:
             problem = search_problem(problem_id=problem_id)
-        except BOJApiError.ProblemApiError.ProblemNotExistError:
+        except SolvedAcApiError.ProblemApiError.ProblemNotExistError:
             await interaction.response.send_message(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
             )
