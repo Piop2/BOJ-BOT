@@ -24,6 +24,7 @@ class Bot(commands.Bot):
         for ext in self.initial_extension:
             await self.load_extension(ext)
         await self.tree.sync()
+
         root_log.info("load all extensions")
         return
 
