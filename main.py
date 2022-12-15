@@ -1,3 +1,5 @@
+__version__ = "v1.0.0"
+
 from discord import Activity
 from discord import ActivityType
 from discord import Intents
@@ -60,6 +62,7 @@ class Bot(commands.Bot):
             case _:
                 status_type = Status.online
 
+        root_log.info(f"version: {__version__}")
         root_log.info(f"activity set: name={activity_name} type={activity_type}")
         root_log.info(f"status set: type={status_type}")
         root_log.info("ready")
@@ -71,5 +74,4 @@ class Bot(commands.Bot):
 
 
 if __name__ == "__main__":
-    token = conf["token"]
-    Bot().run(token=token)
+    Bot().run(token=conf["token"])
