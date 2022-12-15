@@ -28,18 +28,24 @@ class SearchProblem(commands.Cog):
         try:
             problem = search_problem(problem_id=problem_id)
         except BOJApiError.ProblemApiError.ProblemNotExistError:
-            await interaction.response.send_message(f"ERROR problem id '{problem_id}' does not exist", ephemeral=False)
+            await interaction.response.send_message(
+                f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
+            )
             problem_log.warning(f"problem does not exist: {problem_id}")
             return
 
-        rank_icon = File(f"resource/rank/{problem.level}.png", filename=f"level_{problem.level}.png")
+        rank_icon = File(
+            f"resource/rank/{problem.level}.png", filename=f"level_{problem.level}.png"
+        )
 
         embed = Embed(title=f"{problem.id}. {problem.title}", url=problem.url)
         embed.set_author(name=problem.rank)
         embed.set_thumbnail(url=f"attachment://level_{problem.level}.png")
         embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
-        await interaction.response.send_message(embed=embed, file=rank_icon, ephemeral=False)
+        await interaction.response.send_message(
+            embed=embed, file=rank_icon, ephemeral=False
+        )
         problem_log.info(f"problem found: {problem_id}")
         return
 

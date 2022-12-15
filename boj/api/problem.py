@@ -21,6 +21,10 @@ def search_problem(problem_id: int) -> Problem:
         case 200:
             return Problem.load_json(json=response.json())
         case 404:
-            raise BOJApiError.ProblemApiError.ProblemNotExistError(f"Problem ID '{problem_id}' does not exist")
+            raise BOJApiError.ProblemApiError.ProblemNotExistError(
+                f"Problem ID '{problem_id}' does not exist"
+            )
         case _:
-            raise BOJApiError.ProblemApiError(f"unexpected error: status code: {status_code}")
+            raise BOJApiError.ProblemApiError(
+                f"unexpected error: status code: {status_code}"
+            )

@@ -7,15 +7,15 @@ def get_problem_url(problem_id: int) -> str:
 
 class Problem:
     def __init__(
-            self,
-            problem_id: int,
-            title_ko: str,
-            is_solvable: bool,
-            is_partial: bool,
-            accepted_user_count: int,
-            level: int,
-            average_tries: int,
-            ko_shorts: list[str, ...],
+        self,
+        problem_id: int,
+        title_ko: str,
+        is_solvable: bool,
+        is_partial: bool,
+        accepted_user_count: int,
+        level: int,
+        average_tries: int,
+        ko_shorts: list[str, ...],
     ):
         self.id = problem_id
         self.title = title_ko

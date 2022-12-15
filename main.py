@@ -12,7 +12,9 @@ root_log = get_logger("root")
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="!", intents=Intents.default(), sync_command=True)
+        super().__init__(
+            command_prefix="!", intents=Intents.default(), sync_command=True
+        )
 
         self.initial_extension = ["cogs.problem", "cogs.problem_img"]
 
@@ -61,7 +63,10 @@ class Bot(commands.Bot):
         root_log.info(f"activity set: name={activity_name} type={activity_type}")
         root_log.info(f"status set: type={status_type}")
         root_log.info("ready")
-        await self.change_presence(activity=Activity(name=activity_name, type=activity_type), status=status_type)
+        await self.change_presence(
+            activity=Activity(name=activity_name, type=activity_type),
+            status=status_type,
+        )
         return
 
 
