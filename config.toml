@@ -1,10 +1,10 @@
 # DISCORD BOT TOKEN
-token = ""
+token = "MTA1MDQ5NTAyNzk3MDg1NTAwMw.G11NMr.CCckDj6aRLZMfYluMd0h6juXnXazUjalVkyTiU"
 
 # presence: bot status, activity which can see in discord
 [presence]
     [presence.activity]
-    name = ""
+    name = "문제 풀이"
     # activity.type
     #  1: unknown
     #  2: playing
@@ -13,7 +13,7 @@ token = ""
     #  5: watching
     #  6: custom
     #  7: competing
-    type = 1
+    type = 4
 
     [presence.status]
     # status.type
@@ -22,5 +22,5 @@ token = ""
     #  3: idle
     #  4: do not disturb
     #  5: invisible
-    type = 1
+    type = 4
 
