@@ -31,6 +31,9 @@
   "loggers": {
     "cmd.problem": {
       "level": "INFO"
+    },
+    "cmd.user": {
+      "level": "INFO"
     }
   }
 }

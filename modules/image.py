@@ -4,7 +4,7 @@ import pygame.image
 import pygame.transform
 from pygame import Surface
 
-from boj.problem import Problem
+from solvedac.problem import Problem
 
 SAVE_PATH = "temp/problem_thumbnail.png"
 IMAGE_SIZE = (1280, 720)  # 720p

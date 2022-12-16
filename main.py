@@ -1,4 +1,4 @@
-__version__ = "v0.2.1"
+__version__ = "0.3.0"
 
 from discord import Activity
 from discord import ActivityType
@@ -18,7 +18,7 @@ class Bot(commands.Bot):
             command_prefix="!", intents=Intents.default(), sync_command=True
         )
 
-        self.initial_extension = ["cogs.problem", "cogs.problem_img"]
+        self.initial_extension = ["cogs.problem", "cogs.problem_img", "cogs.user"]
 
     async def setup_hook(self):
         for ext in self.initial_extension:
