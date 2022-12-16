@@ -9,22 +9,21 @@ def _get_profile_url(profile_name: str) -> str:
 
 class User:
     def __init__(
-            self,
-            name: str,
-            bio: str,
-            organizations: list[Organization],
-            badge: Badge,
-            background: Background,
-            profile_image_url: str,
-            solved_count: int,
-            vote_count: int,
-            tier: int,
-            rating: int,
-            class_: int,
-            rival_count: int,
-            max_streak: int,
-            rank: int
-
+        self,
+        name: str,
+        bio: str,
+        organizations: list[Organization],
+        badge: Badge,
+        background: Background,
+        profile_image_url: str,
+        solved_count: int,
+        vote_count: int,
+        tier: int,
+        rating: int,
+        class_: int,
+        rival_count: int,
+        max_streak: int,
+        rank: int,
     ):
         self.name = name
         self.bio = bio
@@ -86,7 +85,7 @@ class User:
             class_=class_,
             rival_count=rival_count,
             max_streak=max_streak,
-            rank=rank
+            rank=rank,
         )
 
     @property

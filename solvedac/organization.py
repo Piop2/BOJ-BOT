@@ -1,5 +1,15 @@
 class Organization:
-    def __init__(self, org_id: int, name: str, org_type: str, rating: int, user_count: int, vote_count: int, solved_count: int, color: str):
+    def __init__(
+        self,
+        org_id: int,
+        name: str,
+        org_type: str,
+        rating: int,
+        user_count: int,
+        vote_count: int,
+        solved_count: int,
+        color: str,
+    ):
         self.id = org_id
         self.name = name
         self.type = org_type
@@ -27,5 +37,5 @@ class Organization:
             user_count=user_count,
             vote_count=vote_count,
             solved_count=solved_count,
-            color=color
+            color=color,
         )

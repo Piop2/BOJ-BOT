@@ -1,5 +1,11 @@
 class Badge:
-    def __init__(self, badge_id: str, badge_image_url: str, display_name: str, display_description: str):
+    def __init__(
+        self,
+        badge_id: str,
+        badge_image_url: str,
+        display_name: str,
+        display_description: str,
+    ):
         self.id = badge_id
         self.image_url = badge_image_url
         self.name = display_name
@@ -15,5 +21,5 @@ class Badge:
             badge_id=badge_id,
             badge_image_url=badge_image_url,
             display_name=display_name,
-            display_description=display_description
+            display_description=display_description,
         )
