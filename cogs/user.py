@@ -47,11 +47,11 @@ class SearchUser(commands.Cog):
             name="소속", value=", ".join([org.name for org in user.organizations])
         )
         embed.add_field(name="레이팅", value=user.rating, inline=True)
+        embed.add_field(name="클래스", value=str(user.class_))
         embed.add_field(name="푼 문제", value=user.solved_count, inline=True)
         embed.add_field(name="최대 연속 풀이", value=user.max_streak, inline=True)
         embed.add_field(name="기여 문제 수", value=user.vote_count, inline=True)
         embed.add_field(name="라이벌 수", value=user.rival_count, inline=True)
-        embed.add_field(name="클래스", value=str(user.class_))
 
         await interaction.response.send_message(
             embed=embed, file=tier_icon, ephemeral=False
