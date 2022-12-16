@@ -13,7 +13,7 @@ class User:
         name: str,
         bio: str,
         organizations: list[Organization],
-        badge: Badge,
+        badge: Badge | None,
         background: Background,
         profile_image_url: str,
         solved_count: int,
@@ -52,7 +52,7 @@ class User:
         name = json["handle"]
         bio = json["bio"]
         organizations = [Organization.load_json(i) for i in json["organizations"]]
-        badge = Badge.load_json(json["badge"])
+        badge = Badge.load_json(json["badge"]) if json["badge"] else None
         background = Background.load_json(json["background"])
         profile_image_url = json["profileImageUrl"]
         solved_count = json["solvedCount"]
