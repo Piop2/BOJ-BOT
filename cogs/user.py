@@ -14,7 +14,7 @@ from discord import Interaction
 import solvedac
 from utils.logger import get_logger
 
-problem_log = get_logger("cmd.user")
+user_log = get_logger("cmd.user")
 
 
 class SearchUser(commands.Cog):
@@ -30,7 +30,7 @@ class SearchUser(commands.Cog):
             await interaction.response.send_message(
                 f"ERROR user id '{user_id}' does not exist", ephemeral=False
             )
-            problem_log.warning(f"user does not exist: {user_id}")
+            user_log.warning(f"user does not exist: {user_id}")
             return
 
         tier_icon = File(
@@ -56,7 +56,13 @@ class SearchUser(commands.Cog):
         await interaction.response.send_message(
             embed=embed, file=tier_icon, ephemeral=False
         )
-        problem_log.info(f"user found: {user_id}")
+        user_log.info(f"user found: {user_id}")
+        return
+
+    @search.error
+    async def search_handler(self, ctx, error):
+        user_log.error(error)
+        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
         return
 
 

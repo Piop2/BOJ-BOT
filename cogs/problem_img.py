@@ -49,6 +49,12 @@ class SearchProblemImg(commands.Cog):
             problem_log.error(e)
         return
 
+    @search.error
+    async def search_handler(self, ctx, error):
+        problem_log.error(error)
+        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
+        return
+
 
 async def setup(bot) -> None:
     await bot.add_cog(SearchProblemImg(bot=bot))
