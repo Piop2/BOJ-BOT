@@ -41,13 +41,18 @@ class SearchUser(commands.Cog):
         embed.set_author(name=user.name, url=user.url, icon_url=user.image_url)
         embed.set_thumbnail(url=f"attachment://level_{user.tier}.png")
         embed.set_image(url=user.background.image_url)
+
         if user.badge is not None:
             embed.set_footer(text=user.badge.name, icon_url=user.badge.image_url)
         embed.add_field(name="랭크", value=f"#{user.rank}", inline=True)
+
+        org_text = "-"
         if user.organizations:
-            embed.add_field(
-                name="소속", value=", ".join([org.name for org in user.organizations])
-            )
+            org_text = ", ".join([org.name for org in user.organizations])
+        embed.add_field(
+            name="소속", value=org_text
+        )
+
         embed.add_field(name="레이팅", value=user.rating, inline=True)
         embed.add_field(name="클래스", value=str(user.class_))
         embed.add_field(name="푼 문제", value=user.solved_count, inline=True)
