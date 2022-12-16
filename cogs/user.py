@@ -43,7 +43,6 @@ class SearchUser(commands.Cog):
         embed.set_image(url=user.background.image_url)
         embed.set_footer(text=user.badge.name, icon_url=user.badge.image_url)
         embed.add_field(name="클래스", value=str(user.class_))
-        embed.add_field(name="랭크", value=f"#{user.rank}", inline=True)
         embed.add_field(
             name="소속", value=", ".join([org.name for org in user.organizations])
         )
@@ -52,6 +51,7 @@ class SearchUser(commands.Cog):
         embed.add_field(name="최대 연속 풀이", value=user.max_streak, inline=True)
         embed.add_field(name="기여 문제 수", value=user.vote_count, inline=True)
         embed.add_field(name="라이벌 수", value=user.rival_count, inline=True)
+        embed.add_field(name="랭크", value=f"#{user.rank}", inline=True)
 
         await interaction.response.send_message(
             embed=embed, file=tier_icon, ephemeral=False
