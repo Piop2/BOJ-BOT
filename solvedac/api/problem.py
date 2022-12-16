@@ -1,7 +1,7 @@
 import requests
 
-from boj.problem import Problem
-from boj.error import SolvedAcApiError
+from solvedac.problem import Problem
+from solvedac.error import SolvedAcApiError
 
 
 def search_problem(problem_id: int) -> Problem:

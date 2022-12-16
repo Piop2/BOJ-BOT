@@ -1,4 +1,4 @@
-from boj.utils.rank import get_rank
+from solvedac.utils.rank import get_rank
 
 
 def _get_problem_url(problem_id: int) -> str:

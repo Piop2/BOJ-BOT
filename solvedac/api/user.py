@@ -1,7 +1,7 @@
 import requests
 
-from boj.user import User
-from boj.error import SolvedAcApiError
+from solvedac.user import User
+from solvedac.error import SolvedAcApiError
 
 
 def search_user(user_id: str):

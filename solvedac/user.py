@@ -1,6 +1,6 @@
-from boj.organization import Organization
-from boj.badge import Badge
-from boj.background import Background
+from solvedac.organization import Organization
+from solvedac.badge import Badge
+from solvedac.background import Background
 
 
 class User:
