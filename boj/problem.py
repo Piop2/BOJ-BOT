@@ -1,7 +1,7 @@
 from boj.utils.rank import get_rank
 
 
-def get_problem_url(problem_id: int) -> str:
+def _get_problem_url(problem_id: int) -> str:
     return f"https://www.acmicpc.net/problem/{problem_id}"
 
 
@@ -59,4 +59,4 @@ class Problem:
 
     @property
     def url(self) -> str:
-        return get_problem_url(problem_id=self.id)
+        return _get_problem_url(problem_id=self.id)
