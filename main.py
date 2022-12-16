@@ -18,7 +18,7 @@ class Bot(commands.Bot):
             command_prefix="!", intents=Intents.default(), sync_command=True
         )
 
-        self.initial_extension = ["cogs.problem", "cogs.problem_img", "cogs.user"]
+        self.initial_extension = ["cogs.problem_search", "cogs.problem_search_img", "cogs.user_search"]
 
     async def setup_hook(self):
         for ext in self.initial_extension:
