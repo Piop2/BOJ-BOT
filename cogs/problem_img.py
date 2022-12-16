@@ -11,8 +11,7 @@ from discord import Embed
 from discord import Interaction
 from discord import File
 
-from boj.api.problem import search_problem
-from boj.error import SolvedAcApiError
+import solvedac
 from utils.logger import get_logger
 from modules.image import make_problem_thumbnail
 
@@ -27,8 +26,8 @@ class SearchProblemImg(commands.Cog):
     @app_commands.describe(problem_id="problem ID registered on BOJ")
     async def search(self, interaction: Interaction, problem_id: int) -> None:
         try:
-            problem = search_problem(problem_id=problem_id)
-        except SolvedAcApiError.ProblemApiError.ProblemNotExistError:
+            problem = solvedac.search_problem(problem_id=problem_id)
+        except solvedac.SolvedAcApiError.ProblemApiError.ProblemNotExistError:
             await interaction.response.send_message(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
             )
