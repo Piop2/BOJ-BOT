@@ -1,7 +1,7 @@
 from solvedac.organization import Organization
 from solvedac.badge import Badge
 from solvedac.background import Background
-from solvedac.utils.tier import get_tier
+from solvedac.utils.rank import get_rank
 
 
 def _get_profile_url(profile_name: str) -> str:
@@ -95,4 +95,4 @@ class User:
 
     @property
     def tier(self) -> str:
-        return get_tier(self.level)
+        return get_rank(self.level)
