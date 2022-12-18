@@ -34,12 +34,12 @@ class SearchUser(commands.Cog):
             return
 
         tier_icon = File(
-            f"resource/rank/{user.tier}.png", filename=f"level_{user.tier}.png"
+            f"resource/rank/{user.level}.png", filename=f"level_{user.level}.png"
         )
 
         embed = Embed(description=user.bio)
         embed.set_author(name=user.name, url=user.url, icon_url=user.image_url)
-        embed.set_thumbnail(url=f"attachment://level_{user.tier}.png")
+        embed.set_thumbnail(url=f"attachment://level_{user.level}.png")
         embed.set_image(url=user.background.image_url)
 
         if user.badge is not None:
