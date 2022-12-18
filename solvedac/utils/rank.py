@@ -30,6 +30,7 @@ RANK = {
     28: "Ruby III",
     29: "Ruby II",
     30: "Ruby I",
+    31: "Master"
 }
 
 

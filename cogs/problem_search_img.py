@@ -15,7 +15,7 @@ import solvedac
 from utils.logger import get_logger
 from modules.image import make_problem_thumbnail
 
-problem_log = get_logger("cmd.problem")
+problem_log = get_logger("cmd.problem_img")
 
 
 class SearchProblemImg(commands.Cog):
