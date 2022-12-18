@@ -33,12 +33,23 @@ class SearchUser(commands.Cog):
             user_log.warning(f"user does not exist: {user_id}")
             return
 
+        files = []
+
         tier_icon = File(
-            f"resource/rank/{user.level}.png", filename=f"level_{user.level}.png"
+            fp=f"resource/rank/{user.level}.png", filename=f"level_{user.level}.png"
         )
+        files.append(tier_icon)
 
         embed = Embed(description=user.bio)
-        embed.set_author(name=user.name, url=user.url, icon_url=user.image_url)
+        if user.image_url is not None:
+            profile_url = user.image_url
+        else:
+            profile_icon = File(
+                fp="resource/default_profile.png", filename="default_profile.png"
+            )
+            files.append(profile_icon)
+            profile_url = "attachment://default_profile.png"
+        embed.set_author(name=user.name, url=user.url, icon_url=profile_url)
         embed.set_thumbnail(url=f"attachment://level_{user.level}.png")
         embed.set_image(url=user.background.image_url)
 
@@ -61,7 +72,7 @@ class SearchUser(commands.Cog):
         embed.add_field(name="라이벌 수", value=user.rival_count, inline=True)
 
         await interaction.response.send_message(
-            embed=embed, file=tier_icon, ephemeral=False
+            embed=embed, files=files, ephemeral=False
         )
         user_log.info(f"user found: {user_id}")
         return
