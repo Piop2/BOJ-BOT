@@ -23,3 +23,20 @@ type = 1
 #  4: do not disturb
 #  5: invisible
 type = 1
+
+# local: private server that bot can give roles
+[local]
+# private server id
+server =
+# private server tier update timer (sec)
+update_timer =
+# local.tier:  role id
+[local.tier]
+Unrated  =
+Bronze   =
+Silver   =
+Gold     =
+Platinum =
+Diamond  =
+Ruby     =
+Master   =

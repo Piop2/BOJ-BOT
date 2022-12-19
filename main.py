@@ -1,11 +1,13 @@
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from discord import Activity
 from discord import ActivityType
 from discord import Intents
 from discord import Status
+from discord import Object
 from discord.ext import commands
 
+from modules.role import check_tier
 from config.config import conf
 from utils.logger import get_logger
 
@@ -14,18 +16,20 @@ root_log = get_logger("root")
 
 class Bot(commands.Bot):
     def __init__(self):
+        intents = Intents.default()
+        intents.members = True
         super().__init__(
-            command_prefix="!", intents=Intents.default(), sync_command=True
+            command_prefix="!", intents=intents, sync_command=True
         )
 
-        self.initial_extension = ["cogs.problem_search", "cogs.problem_search_img", "cogs.user_search"]
+        self.global_command = ["cogs.problem_search", "cogs.user_search", "cogs.connect"]
 
     async def setup_hook(self):
-        for ext in self.initial_extension:
+        for ext in self.global_command:
             await self.load_extension(ext)
         await self.tree.sync()
-
-        root_log.info("load all extensions")
+        await self.tree.sync(guild=Object(id=conf["local"]["server"]))
+        root_log.info(f"load all extensions")
         return
 
     async def on_ready(self):
@@ -71,6 +75,9 @@ class Bot(commands.Bot):
             activity=Activity(name=activity_name, type=activity_type),
             status=status_type,
         )
+
+        root_log.info("tier check routine started")
+        await check_tier(bot=self)
         return
 
 
