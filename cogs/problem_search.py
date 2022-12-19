@@ -51,7 +51,7 @@ class SearchProblem(commands.Cog):
 
     @app_commands.command(name="problem-img", description="search BOJ problem with ID")
     @app_commands.describe(problem_id="problem ID registered on BOJ")
-    async def search(self, interaction: Interaction, problem_id: int) -> None:
+    async def search_img(self, interaction: Interaction, problem_id: int) -> None:
         try:
             problem = solvedac.search_problem(problem_id=problem_id)
         except solvedac.SolvedAcApiError.ProblemApiError.ProblemNotExistError:
@@ -78,6 +78,12 @@ class SearchProblem(commands.Cog):
 
     @search.error
     async def search_handler(self, ctx, error):
+        problem_log.error(error)
+        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
+        return
+
+    @search_img.error
+    async def search_img_handler(self, ctx, error):
         problem_log.error(error)
         await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
         return
