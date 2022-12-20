@@ -12,6 +12,7 @@ from discord import Object
 
 import solvedac
 from modules.role import add_member
+from modules.role import update_role
 from config.config import conf
 from utils.logger import get_logger
 
@@ -36,6 +37,8 @@ class Login(commands.Cog):
             return
 
         await add_member(member=interaction.user, user_id=user.name)
+        await update_role(member=interaction.user, user=user)
+
         await interaction.response.send_message(f"user {user.name} connected!")
         return
 

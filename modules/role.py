@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.errors import Forbidden
 
 import solvedac
+from solvedac.user import User
 from config.config import conf
 from utils.logger import get_logger
 
@@ -20,7 +21,7 @@ async def add_member(member: Member, user_id: str) -> None:
         user_data[member.id] = user_id
 
     with open(USER_DATA_PATH, "w") as f:
-        json.dump(user_data, f)
+        json.dump(user_data, f, indent=4)
     return
 
 
@@ -33,15 +34,17 @@ async def reset_role(member: Member) -> None:
     return
 
 
-async def update_role(member: Member, user_id: str) -> None:
+async def update_role(member: Member, user_id: str = None, user: User = None) -> None:
     await reset_role(member=member)
 
-    user = solvedac.search_user(user_id=user_id)
+    if user_id is not None:
+        user = solvedac.search_user(user_id=user_id)
+    elif user is None:
+        connect_log.error("update_role should get 1 param: user_id or user")
 
     role_name = user.tier.split()[0]
     role_id = conf["local"]["tier"][role_name]
     await member.add_roles(Object(role_id))
-    return
 
 
 async def check_tier(bot: commands.Bot):
