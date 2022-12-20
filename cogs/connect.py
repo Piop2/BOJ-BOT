@@ -12,7 +12,8 @@ from discord import Object
 
 import solvedac
 from modules.role import set_member
-from modules.role import update_role
+from modules.role import change_role
+from modules.role import get_tier_role
 from config.config import conf
 from utils.logger import get_logger
 
@@ -36,8 +37,8 @@ class Login(commands.Cog):
             connect_log.warning(f"user does not exist: {user_id}")
             return
 
-        await set_member(member=interaction.user, user_id=user.name)
-        await update_role(member=interaction.user, user=user)
+        await set_member(member=interaction.user, user=user)
+        await change_role(member=interaction.user, new_role=get_tier_role(user=user))
 
         await interaction.response.send_message(f"USER ( {user.name} ) connected!")
         return
