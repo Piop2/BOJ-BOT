@@ -15,7 +15,7 @@ USER_DATA_PATH = "data/user.json"
 connect_log = get_logger("cmd.connect")
 
 
-async def add_member(member: Member, user_id: str) -> None:
+async def set_member(member: Member, user_id: str) -> None:
     with open(USER_DATA_PATH, "r") as f:
         user_data = json.load(f)
         user_data[member.id] = user_id
@@ -31,6 +31,8 @@ async def reset_role(member: Member) -> None:
             await member.remove_roles(Object(role_id))
         except Forbidden:
             pass
+        else:
+            return
     return
 
 
@@ -45,6 +47,7 @@ async def update_role(member: Member, user_id: str = None, user: User = None) ->
     role_name = user.tier.split()[0]
     role_id = conf["local"]["tier"][role_name]
     await member.add_roles(Object(role_id))
+    return
 
 
 async def check_tier(bot: commands.Bot):

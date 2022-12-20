@@ -11,7 +11,7 @@ from discord import Interaction
 from discord import Object
 
 import solvedac
-from modules.role import add_member
+from modules.role import set_member
 from modules.role import update_role
 from config.config import conf
 from utils.logger import get_logger
@@ -36,10 +36,10 @@ class Login(commands.Cog):
             connect_log.warning(f"user does not exist: {user_id}")
             return
 
-        await add_member(member=interaction.user, user_id=user.name)
+        await set_member(member=interaction.user, user_id=user.name)
         await update_role(member=interaction.user, user=user)
 
-        await interaction.response.send_message(f"user {user.name} connected!")
+        await interaction.response.send_message(f"USER ( {user.name} ) connected!")
         return
 
     @login.error
