@@ -12,7 +12,7 @@ from utils.logger import get_logger
 
 USER_DATA_PATH = "data/user.json"
 
-connect_log = get_logger("cmd.connect")
+connect_log = get_logger("tierUpdate")
 
 
 async def check_tier(bot: commands.Bot):
