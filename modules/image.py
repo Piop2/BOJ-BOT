@@ -28,11 +28,28 @@ def _get_id_image(problem_id):
 
 def _get_title_image(problem_title):
     title_font = pygame.font.Font(FONT_FILE, 150)
+    titles = [problem_title]
     if title_font.size(problem_title)[0] > 930:
         title_font = pygame.font.Font(FONT_FILE, 100)
+        if title_font.size(problem_title)[0] > 930:
+            title_words = problem_title.split()
+            for i in range(1, len(title_words) + 1):
+                if title_font.size(" ".join(title_words[:i]))[0] >= 930:
+                    titles = [" ".join(title_words[:i - 1]), " ".join(title_words[i - 1:])]
+                    break
 
-    title_image = title_font.render(problem_title, True, (0, 0, 0))
-    return title_image
+    font_height = title_font.get_height()
+
+    surf = Surface((930, len(titles) * font_height))
+    surf.fill((255, 255, 255))
+    surf.set_colorkey((255, 255, 255))
+
+    y = 0
+    for title in titles:
+        title_image = title_font.render(title, True, (0, 0, 0))
+        surf.blit(title_image, (0, y))
+        y += font_height
+    return surf
 
 
 def _get_tag_image(problem_tags):
