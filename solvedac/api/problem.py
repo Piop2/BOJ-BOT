@@ -1,7 +1,8 @@
 import requests
 
 from solvedac.problem import Problem
-from solvedac.error import SolvedAcApiError
+from solvedac.error import ProblemNotExistError
+from solvedac.error import ProblemApiError
 
 
 def search_problem(problem_id: int) -> Problem:
@@ -21,10 +22,10 @@ def search_problem(problem_id: int) -> Problem:
         case 200:
             return Problem.load_json(json=response.json())
         case 404:
-            raise SolvedAcApiError.ProblemApiError.ProblemNotExistError(
+            raise ProblemNotExistError(
                 f"Problem ID '{problem_id}' does not exist"
             )
         case _:
-            raise SolvedAcApiError.ProblemApiError(
+            raise ProblemApiError(
                 f"unexpected error: status code: {status_code}"
             )

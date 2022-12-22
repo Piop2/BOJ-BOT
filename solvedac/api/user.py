@@ -1,7 +1,8 @@
 import requests
 
 from solvedac.user import User
-from solvedac.error import SolvedAcApiError
+from solvedac.error import UserNotExistError
+from solvedac.error import UserApiError
 
 
 def search_user(user_id: str):
@@ -21,10 +22,10 @@ def search_user(user_id: str):
         case 200:
             return User.load_json(response.json())
         case 404:
-            raise SolvedAcApiError.UserApiError.UserNotExistError(
+            raise UserNotExistError(
                 f"User ID '{user_id}' does not exist"
             )
         case _:
-            raise SolvedAcApiError.UserApiError(
+            raise UserApiError(
                 f"unexpected error: status code: {status_code}"
             )

@@ -1,8 +1,18 @@
 class SolvedAcApiError(Exception):
-    class ProblemApiError(Exception):
-        class ProblemNotExistError(Exception):
-            pass
+    pass
 
-    class UserApiError(Exception):
-        class UserNotExistError(Exception):
-            pass
+
+class ProblemApiError(SolvedAcApiError):
+    pass
+
+
+class ProblemNotExistError(ProblemApiError):
+    pass
+
+
+class UserApiError(SolvedAcApiError):
+    pass
+
+
+class UserNotExistError(UserApiError):
+    pass
