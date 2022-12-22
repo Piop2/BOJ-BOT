@@ -1,5 +1,5 @@
 """
-# Commmand
+# Command
 : /problem problem_id
 
 # Param

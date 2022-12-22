@@ -1,5 +1,5 @@
 """
-# Commmand
+# Command
 : /user user_id
 
 # Param
