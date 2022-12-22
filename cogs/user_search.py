@@ -26,7 +26,7 @@ class SearchUser(commands.Cog):
     async def search(self, interaction: Interaction, user_id: str) -> None:
         try:
             user = solvedac.search_user(user_id=user_id)
-        except solvedac.SolvedAcApiError.UserApiError.UserNotExistError:
+        except solvedac.UserNotExistError:
             await interaction.response.send_message(
                 f"ERROR user id '{user_id}' does not exist", ephemeral=False
             )
