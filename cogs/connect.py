@@ -27,7 +27,7 @@ class Login(commands.Cog):
     @app_commands.command(name="connect", description="connect to solved.ac")
     @app_commands.describe(user_id="user ID on BOJ")
     @app_commands.guilds(Object(id=conf["local"]["server"]))
-    async def login(self, interaction: Interaction, user_id: str) -> None:
+    async def connect(self, interaction: Interaction, user_id: str) -> None:
         try:
             user = solvedac.search_user(user_id=user_id)
         except solvedac.UserNotExistError:
@@ -43,8 +43,8 @@ class Login(commands.Cog):
         await interaction.response.send_message(f"USER ( {user.name} ) connected!")
         return
 
-    @login.error
-    async def login_handler(self, ctx, error):
+    @connect.error
+    async def cnt_handler(self, ctx, error):
         connect_log.error(error)
         await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
         return
