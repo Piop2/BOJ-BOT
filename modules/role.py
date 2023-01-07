@@ -11,14 +11,22 @@ from config.config import conf
 from utils.logger import get_logger
 
 USER_DATA_PATH = "data/user.json"
+USER_DATA_BACKUP_PATH = "data/user.json.back"
 
 connect_log = get_logger("tierUpdate")
 
 
 async def check_tier(bot: commands.Bot):
     while True:
-        with open(USER_DATA_PATH, "r") as f:
-            user_data = json.load(f)
+        try:
+            with open(USER_DATA_PATH, "r") as f:
+                user_data = json.load(f)
+        except json.JSONDecodeError:
+            connect_log.warning("reading user.json failed. use backup file")
+            with open(USER_DATA_BACKUP_PATH, "r") as f:
+                user_data = json.load(f)
+            with open(USER_DATA_PATH, "w") as f:
+                json.dump(user_data, f, indent=4)
 
         guild = bot.get_guild(conf["local"]["server"])
         coro = []
