@@ -63,7 +63,7 @@ def _get_tag_image(problem_tags):
     return tag_font.render(text, True, (100, 100, 100))
 
 
-def make_problem_thumbnail(problem: Problem):
+def make_thumbnail(problem: Problem):
     surf = Surface(IMAGE_SIZE)
     surf.fill((255, 255, 255))
 

@@ -13,7 +13,7 @@ from discord import Interaction
 
 import solvedac
 from utils.logger import get_logger
-from modules.image import make_problem_thumbnail
+from modules.draw.problem import make_thumbnail
 
 problem_log = get_logger("cmd.problem")
 
@@ -62,7 +62,7 @@ class SearchProblem(commands.Cog):
             return
 
         try:
-            make_problem_thumbnail(problem=problem)
+            make_thumbnail(problem=problem)
             file = File("temp/problem_thumbnail.png", filename="test_thumbnail.png")
 
             embed = Embed(title="보러 가기", url=problem.url)
