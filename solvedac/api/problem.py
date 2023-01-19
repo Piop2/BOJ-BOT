@@ -1,11 +1,10 @@
 import requests
 
-from solvedac.problem import Problem
 from solvedac.error import ProblemNotExistError
 from solvedac.error import ProblemApiError
 
 
-def search_problem(problem_id: int) -> Problem:
+def show_problem(problem_id: int):
     """
     ID로 문제 가져오기
     :param problem_id: 문제 ID
@@ -20,7 +19,7 @@ def search_problem(problem_id: int) -> Problem:
     status_code = response.status_code
     match status_code:
         case 200:
-            return Problem.load_json(json=response.json())
+            return response.json()
         case 404:
             raise ProblemNotExistError(
                 f"Problem ID '{problem_id}' does not exist"
