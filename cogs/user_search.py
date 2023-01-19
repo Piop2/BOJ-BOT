@@ -25,7 +25,7 @@ class SearchUser(commands.Cog):
     @app_commands.describe(user_id="user ID on BOJ")
     async def search(self, interaction: Interaction, user_id: str) -> None:
         try:
-            user = solvedac.search_user(user_id=user_id)
+            user = solvedac.get_user(user_id=user_id)
         except solvedac.UserNotExistError:
             await interaction.response.send_message(
                 f"ERROR user id '{user_id}' does not exist", ephemeral=False

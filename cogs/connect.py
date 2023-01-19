@@ -11,9 +11,9 @@ from discord import Interaction
 from discord import Object
 
 import solvedac
-from modules.role import set_member
-from modules.role import change_role
-from modules.role import get_tier_role
+from modules.routine.role import set_member
+from modules.routine.role import change_role
+from modules.routine.role import get_tier_role
 from config.config import conf
 from utils.logger import get_logger
 
@@ -29,7 +29,7 @@ class Login(commands.Cog):
     @app_commands.guilds(Object(id=conf["local"]["server"]))
     async def connect(self, interaction: Interaction, user_id: str) -> None:
         try:
-            user = solvedac.search_user(user_id=user_id)
+            user = solvedac.get_user(user_id=user_id)
         except solvedac.UserNotExistError:
             await interaction.response.send_message(
                 f"ERROR user id '{user_id}' does not exist", ephemeral=False

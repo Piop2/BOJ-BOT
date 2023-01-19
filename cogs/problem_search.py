@@ -26,7 +26,7 @@ class SearchProblem(commands.Cog):
     @app_commands.describe(problem_id="problem ID registered on BOJ")
     async def search(self, interaction: Interaction, problem_id: int) -> None:
         try:
-            problem = solvedac.search_problem(problem_id=problem_id)
+            problem = solvedac.get_problem(problem_id=problem_id)
         except solvedac.ProblemNotExistError:
             await interaction.response.send_message(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
@@ -53,7 +53,7 @@ class SearchProblem(commands.Cog):
     @app_commands.describe(problem_id="problem ID registered on BOJ")
     async def search_img(self, interaction: Interaction, problem_id: int) -> None:
         try:
-            problem = solvedac.search_problem(problem_id=problem_id)
+            problem = solvedac.get_problem(problem_id=problem_id)
         except solvedac.ProblemNotExistError:
             await interaction.response.send_message(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
