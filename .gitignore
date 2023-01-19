@@ -5,6 +5,9 @@
 # __pychache__
 *.pyc
 
+# config
+/config.toml
+
 # log file
 /error.log
 
