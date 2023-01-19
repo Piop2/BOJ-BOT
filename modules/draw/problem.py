@@ -1,5 +1,4 @@
 import pygame.draw
-import pygame.font
 import pygame.image
 import pygame.transform
 from pygame import Surface
@@ -10,8 +9,6 @@ SAVE_PATH = "temp/problem_thumbnail.png"
 IMAGE_SIZE = (1280, 720)  # 720p
 RANK_IMG_PATH = "resource/rank/{}.png"
 FONT_FILE = "resource/font/BMJUA.ttf"
-
-pygame.font.init()
 
 
 def _get_rank_image(level):
