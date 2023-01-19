@@ -6,8 +6,9 @@ from discord import Intents
 from discord import Status
 from discord import Object
 from discord.ext import commands
+import pygame.font
 
-from modules.role import check_tier
+from modules.routine.role import check_tier
 from config.config import conf
 from utils.logger import get_logger
 
@@ -22,10 +23,10 @@ class Bot(commands.Bot):
             command_prefix="!", intents=intents, sync_command=True
         )
 
-        self.global_command = ["cogs.problem_search", "cogs.user_search", "cogs.connect"]
+        self.all_cogs = ["cogs.problem_search", "cogs.user_search", "cogs.connect"]
 
     async def setup_hook(self):
-        for ext in self.global_command:
+        for ext in self.all_cogs:
             await self.load_extension(ext)
         await self.tree.sync()
         await self.tree.sync(guild=Object(id=conf["local"]["server"]))
@@ -76,10 +77,10 @@ class Bot(commands.Bot):
             status=status_type,
         )
 
-        root_log.info("tier check routine started")
         await check_tier(bot=self)
         return
 
 
 if __name__ == "__main__":
+    pygame.font.init()
     Bot().run(token=conf["token"])

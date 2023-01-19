@@ -1,3 +1,5 @@
+# TODO class 써서 코드 깔끔시하게!!
+
 import json
 import asyncio
 from discord import Member
@@ -82,7 +84,7 @@ async def _remove_role(member: Member, role_id: int) -> None:
 
 
 async def _update_role(member: Member, user_data: dict = None) -> None:
-    user = solvedac.search_user(user_id=user_data["solvedAcId"])
+    user = solvedac.get_user(user_id=user_data["solvedAcId"])
     latest_tier = user_data["latestTier"]
 
     tier = _get_tier(user=user)
