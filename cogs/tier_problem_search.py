@@ -45,6 +45,7 @@ class SearchTierProblem(commands.Cog):
         self.interaction = interaction
         self.tier_id = get_rank_id(tier_name)
         self.tier_name = tier_name
+        await self.interaction.response.defer()
         try:
             self.tier_problem = solvedac.get_tier_problem(tier_id=self.tier_id)
         except solvedac.TierNotExistError:
@@ -96,7 +97,7 @@ class SearchTierProblem(commands.Cog):
 
 
         if self.first == True:
-            await self.interaction.response.send_message(embed=self.embed, view=self.view, file=tier_icon, ephemeral=False)
+            await self.interaction.followup.send(embed=self.embed, view=self.view, file=tier_icon, ephemeral=False)
             self.first = False
         else:
             await self.interaction.edit_original_response(embed=self.embed, view=self.view)

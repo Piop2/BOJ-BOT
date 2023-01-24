@@ -42,6 +42,7 @@ class SearchClassProblem(commands.Cog):
     async def search(self, interaction: Interaction, class_id: int) -> None:
         self.interaction = interaction
         self.class_id = class_id
+        await self.interaction.response.defer()
         try:
             self.class_problem = solvedac.get_class_problem(class_id=self.class_id)
         except solvedac.ClassNotExistError:
@@ -92,7 +93,7 @@ class SearchClassProblem(commands.Cog):
             self.view.add_item(self.button2)
 
         if self.first == True:
-            await self.interaction.response.send_message(embed=self.embed, view=self.view, file=class_icon, ephemeral=False)
+            await self.interaction.followup.send(embed=self.embed, view=self.view, file=class_icon, ephemeral=False)
             self.first = False
         else:
             await self.interaction.edit_original_response(embed=self.embed, view=self.view)

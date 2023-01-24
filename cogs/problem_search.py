@@ -30,6 +30,8 @@ class SearchProblem(commands.Cog):
 
     @staticmethod
     async def send_message(problem_id: int, interaction: Interaction):
+        await interaction.response.defer()
+
         try:
             problem = solvedac.get_problem(problem_id=problem_id)
         except solvedac.ProblemNotExistError:
@@ -48,7 +50,7 @@ class SearchProblem(commands.Cog):
         embed.set_thumbnail(url=f"attachment://level_{problem.level}.png")
         embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             embed=embed, file=rank_icon, ephemeral=False
         )
         problem_log.info(f"problem found: {problem_id}")
