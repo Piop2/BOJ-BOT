@@ -65,13 +65,13 @@ class SearchClassProblem(commands.Cog):
             ]
         )
         self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
-        self.button2 = Button(label="이전 페이지", style=ButtonStyle.primary)
+        self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
         self.embed = Embed(title=f"Class {self.class_id}",
-            description='\t'.join([f"{i.id}. {i.title}" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}페이지')
+            description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}페이지')
         self.embed.set_thumbnail(url=f"attachment://class{self.class_id}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            await self.interaction.response.send_message(f"{self.selects.values[0]}를 선택하셨습니다.")
+            await interaction.response.send_message(f"{self.selects.values[0]}를 선택하셨습니다.")
 
         async def button1_callback(interaction: Interaction):
             self.page += 1
@@ -95,7 +95,7 @@ class SearchClassProblem(commands.Cog):
             await self.interaction.response.send_message(embed=self.embed, view=self.view, file=class_icon, ephemeral=False)
             self.first = False
         else:
-            await self.interaction.response.message.edit_message(embed=self.embed, view=self.view)
+            await self.interaction.edit_original_response(embed=self.embed, view=self.view)
 
 
     @search.error
