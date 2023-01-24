@@ -32,6 +32,9 @@
     "cmd.problem": {
       "level": "INFO"
     },
+    "cmd.class_problem": {
+      "level": "INFO"
+    },
     "cmd.user": {
       "level": "INFO"
     },

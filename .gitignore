@@ -13,3 +13,7 @@
 
 # temp folder
 /temp/*
+
+# data file
+/data/user.json
+/data/user.json.back
