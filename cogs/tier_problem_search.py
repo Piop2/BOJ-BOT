@@ -1,9 +1,9 @@
 """
 # Command
-: /class class_id
+: /tier tier_name
 
 # Param
-int class_id: solved.ac 에 등록된 class id
+str tier_name: solved.ac 에 있는 티어 이름
 """
 from discord import app_commands
 from discord.ext import commands
@@ -17,12 +17,13 @@ from discord import Interaction
 from cogs.problem_search import SearchProblem
 
 import solvedac
+from solvedac.utils.rank import get_rank_id
 from utils.logger import get_logger
 
-problem_log = get_logger("cmd.class_problem")
+problem_log = get_logger("cmd.tier_problem")
 
 
-class SearchClassProblem(commands.Cog):
+class SearchTierProblem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.page = 0
@@ -32,43 +33,45 @@ class SearchClassProblem(commands.Cog):
         self.selects: Select
         self.button1: Button
         self.button2: Button
-        self.class_problem: list
-        self.class_id: int
+        self.tier_problem: list
+        self.tier_id: int
+        self.tier_name: str
         self.interaction: Interaction
         self.response: Interaction.InteractionResponse
 
-    @app_commands.command(name="class", description="search Class Problems with ID")
-    @app_commands.describe(class_id="class ID registered on solved.ac")
-    async def search(self, interaction: Interaction, class_id: int) -> None:
+    @app_commands.command(name="tier", description="search Tier Problems with Tier Name")
+    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)")
+    async def search(self, interaction: Interaction, tier_name: str) -> None:
         self.interaction = interaction
-        self.class_id = class_id
+        self.tier_id = get_rank_id(tier_name)
+        self.tier_name = tier_name
         try:
-            self.class_problem = solvedac.get_class_problem(class_id=self.class_id)
-        except solvedac.ClassNotExistError:
+            self.tier_problem = solvedac.get_tier_problem(tier_id=self.tier_id)
+        except solvedac.TierNotExistError:
             await interaction.response.send_message(
-                f"ERROR class id '{self.class_id}' does not exist", ephemeral=False
+                f"ERROR tier '{self.tier_name}' does not exist", ephemeral=False
             )
-            problem_log.warning(f"class problem does not exist: {self.class_id}")
+            problem_log.warning(f"Tier problem does not exist: {self.tier_name}")
             return
         await self.setui()
-        problem_log.info(f"class problem found: {self.class_id}")
+        problem_log.info(f"tier problem found: {self.tier_name}")
 
 
     async def setui(self):
-        class_icon = File(
-            f"resource/class/{3*self.class_id+1}.png", filename=f"{3*self.class_id+1}.png"
+        tier_icon = File(
+            f"resource/rank/{self.tier_id}.png", filename=f"{self.tier_id}.png"
         )
         self.selects = Select(
             options=[
                 SelectOption(label=f"{i.id}. {i.title}", value=i.id)
-                for i in self.class_problem[self.page*25:self.page*25+25]
+                for i in self.tier_problem[self.page*25:self.page*25+25]
             ]
         )
         self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
         self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
-        self.embed = Embed(title=f"Class {self.class_id}",
-            description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.class_problem)//25}페이지')
-        self.embed.set_thumbnail(url=f"attachment://{3*self.class_id+1}.png")
+        self.embed = Embed(title=f"{self.tier_name}",
+                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.tier_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.tier_problem)//25}페이지')
+        self.embed.set_thumbnail(url=f"attachment://{self.tier_id}.png")
 
         async def select_callback(interaction: Interaction) -> None:
             await interaction.response.send_message(f"{self.selects.values[0]}를 선택하셨습니다.")
@@ -86,13 +89,14 @@ class SearchClassProblem(commands.Cog):
         self.button2.callback = button2_callback
         self.view = View()
         self.view.add_item(self.selects)
-        if self.page != len(self.class_problem)//25:
-            self.view.add_item(self.button1)
         if self.page != 0:
             self.view.add_item(self.button2)
+        if self.page != len(self.tier_problem)//25:
+            self.view.add_item(self.button1)
+
 
         if self.first == True:
-            await self.interaction.response.send_message(embed=self.embed, view=self.view, file=class_icon, ephemeral=False)
+            await self.interaction.response.send_message(embed=self.embed, view=self.view, file=tier_icon, ephemeral=False)
             self.first = False
         else:
             await self.interaction.edit_original_response(embed=self.embed, view=self.view)
@@ -106,5 +110,5 @@ class SearchClassProblem(commands.Cog):
 
 
 async def setup(bot) -> None:
-    await bot.add_cog(SearchClassProblem(bot=bot))
+    await bot.add_cog(SearchTierProblem(bot=bot))
     return

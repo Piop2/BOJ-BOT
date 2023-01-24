@@ -13,8 +13,13 @@ def get_class_problem(class_id: int) -> list[Problem, ...]:
     return list(map(Problem.load_json, solvedac.api.problem.show_class_problem(class_id=class_id)["items"]))
 
 
-def get_tier_problem(tier_id: int, page: int = 1) -> list[Problem, ...]:
-    return list(map(Problem.load_json, solvedac.api.problem.show_tier_problem(tier_id=tier_id, page=page)["items"]))
+def get_tier_problem(tier_id: int) -> list[Problem, ...]:
+    page = solvedac.api.problem.show_tier_problem(tier_id=tier_id, page=1)["count"]//50 + 1
+    problems = []
+    for i in range(page):
+        problems.extend(list(map(Problem.load_json,
+                                 solvedac.api.problem.show_tier_problem(tier_id=tier_id, page=i+1)["items"])))
+    return problems
 
 
 def get_user(user_id: str) -> User:

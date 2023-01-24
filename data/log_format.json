@@ -35,6 +35,9 @@
     "cmd.class_problem": {
       "level": "INFO"
     },
+    "cmd.tier_problem": {
+      "level": "INFO"
+    },
     "cmd.user": {
       "level": "INFO"
     },
