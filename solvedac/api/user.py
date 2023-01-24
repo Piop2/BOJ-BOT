@@ -30,7 +30,7 @@ def show_user(user_id: str):
             )
 
 
-def search_problem(user_id: str, page: int):
+def show_user_solved_problem(user_id: str, page: int):
     """
     ID로 유저가 푼 문제 정보 가져오기
     :param user_id: 유저 ID
