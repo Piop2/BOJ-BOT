@@ -25,6 +25,11 @@ class SearchProblem(commands.Cog):
     @app_commands.command(name="problem", description="search BOJ problem with ID")
     @app_commands.describe(problem_id="problem ID registered on BOJ")
     async def search(self, interaction: Interaction, problem_id: int) -> None:
+        await self.send_message(problem_id=problem_id, interaction=interaction)
+        return
+
+    @staticmethod
+    async def send_message(problem_id: int, interaction: Interaction):
         try:
             problem = solvedac.get_problem(problem_id=problem_id)
         except solvedac.ProblemNotExistError:
@@ -47,7 +52,6 @@ class SearchProblem(commands.Cog):
             embed=embed, file=rank_icon, ephemeral=False
         )
         problem_log.info(f"problem found: {problem_id}")
-        return
 
     @app_commands.command(name="problem-img", description="search BOJ problem with ID")
     @app_commands.describe(problem_id="problem ID registered on BOJ")

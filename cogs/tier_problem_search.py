@@ -74,7 +74,7 @@ class SearchTierProblem(commands.Cog):
         self.embed.set_thumbnail(url=f"attachment://{self.tier_id}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            await interaction.response.send_message(f"{self.selects.values[0]}를 선택하셨습니다.")
+            await SearchProblem.send_message(int(self.selects.values[0]), interaction)
 
         async def button1_callback(interaction: Interaction):
             self.page += 1
