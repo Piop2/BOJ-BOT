@@ -49,7 +49,7 @@ class SearchTierProblem(commands.Cog):
         try:
             self.tier_problem = solvedac.get_tier_problem(tier_id=self.tier_id)
         except solvedac.TierNotExistError:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"ERROR tier '{self.tier_name}' does not exist", ephemeral=False
             )
             problem_log.warning(f"Tier problem does not exist: {self.tier_name}")
@@ -118,7 +118,7 @@ class SearchTierProblem(commands.Cog):
     @search.error
     async def search_handler(self, ctx, error):
         problem_log.error(error)
-        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
+        await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
         return
 
 

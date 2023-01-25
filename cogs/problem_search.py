@@ -35,7 +35,7 @@ class SearchProblem(commands.Cog):
         try:
             problem = solvedac.get_problem(problem_id=problem_id)
         except solvedac.ProblemNotExistError:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
             )
             problem_log.warning(f"problem does not exist: {problem_id}")
@@ -82,7 +82,7 @@ class SearchProblem(commands.Cog):
     @search.error
     async def search_handler(self, ctx, error):
         problem_log.error(error)
-        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
+        await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
         return
 
     @search_img.error

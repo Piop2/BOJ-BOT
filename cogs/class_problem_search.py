@@ -46,7 +46,7 @@ class SearchClassProblem(commands.Cog):
         try:
             self.class_problem = solvedac.get_class_problem(class_id=self.class_id)
         except solvedac.ClassNotExistError:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"ERROR class id '{self.class_id}' does not exist", ephemeral=False
             )
             problem_log.warning(f"class problem does not exist: {self.class_id}")
@@ -102,7 +102,7 @@ class SearchClassProblem(commands.Cog):
     @search.error
     async def search_handler(self, ctx, error):
         problem_log.error(error)
-        await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
+        await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
         return
 
 
