@@ -29,7 +29,7 @@
     "level": "INFO"
   },
   "loggers": {
-    "cmd.problem": {
+    "send.problem": {
       "level": "INFO"
     },
     "cmd.class_problem": {
@@ -38,7 +38,10 @@
     "cmd.tier_problem": {
       "level": "INFO"
     },
-    "cmd.user": {
+    "cmd.search": {
+      "level": "INFO"
+    },
+    "send.user": {
       "level": "INFO"
     },
     "cmd.connect": {

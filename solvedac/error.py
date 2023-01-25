@@ -32,3 +32,7 @@ class TierApiError(SolvedAcApiError):
 
 class TierNotExistError(TierApiError):
     pass
+
+
+class SuggestionsApiError(SolvedAcApiError):
+    pass

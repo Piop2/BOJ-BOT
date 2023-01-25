@@ -14,7 +14,7 @@ from discord import SelectOption
 from discord.ui import Button, View
 from discord import ButtonStyle
 from discord import Interaction
-from cogs.problem_search import SearchProblem
+from cogs.problem import send_problem
 
 import solvedac
 from utils.logger import get_logger
@@ -72,7 +72,7 @@ class SearchClassProblem(commands.Cog):
         self.embed.set_thumbnail(url=f"attachment://{3*self.class_id+1}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            await SearchProblem.send_message(int(self.selects.values[0]), interaction)
+            await send_problem(int(self.selects.values[0]), interaction)
 
         async def button1_callback(interaction: Interaction):
             self.page += 1
