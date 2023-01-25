@@ -77,7 +77,7 @@ class Bot(commands.Bot):
             status=status_type,
         )
 
-        await check_tier(bot=self)
+        # await check_tier(bot=self)
         return
 
 
