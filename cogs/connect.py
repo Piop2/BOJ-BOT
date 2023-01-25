@@ -62,7 +62,7 @@ class Login(commands.Cog):
             else:
                 if attempt > 5:
                     embed = Embed(title='등록이 최소되었습니다', description='등록을 너무 많이 시도하셨습니다\n등록 절차를 강제로 중단합니다.')
-                    await self.interaction.edit_original_response(embed=embed)
+                    await self.interaction.edit_original_response(embed=embed, view=None)
                 else:
                     embed = Embed(title=f'{user.name}님의 유저 등록에 실패했습니다', description=f'{attempt}번째 시도는 실패하셨습니다. 다시 시도해주세요\n'
                                                                                  f'1. solved.ac에 로그인하고 본인의 프로필 페이지로 가주세요\n'
