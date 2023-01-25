@@ -38,7 +38,7 @@ class SearchClassProblem(commands.Cog):
         self.response: Interaction.InteractionResponse
 
     @app_commands.command(name="class", description="search Class Problems with ID")
-    @app_commands.describe(class_id="class ID registered on solved.ac")
+    @app_commands.describe(class_id="class ID registered on solved.ac(1~10)")
     async def search(self, interaction: Interaction, class_id: int) -> None:
         self.interaction = interaction
         self.class_id = class_id

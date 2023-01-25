@@ -58,6 +58,18 @@ class SearchTierProblem(commands.Cog):
         problem_log.info(f"tier problem found: {self.tier_name}")
 
 
+    @search.autocomplete('tier_name')
+    async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+        tiers = ['Bronze V', 'Bronze IV', 'Bronze III', 'Bronze II', 'Bronze I', 'Silver V', 'Silver IV',
+                 'Silver III', 'Silver II', 'Silver I', 'Gold V', 'Gold IV', 'Gold III', 'Gold II', 'Gold I', 'Platinum V',
+                 'Platinum IV', 'Platinum III', 'Platinum II', 'Platinum I', 'Diamond V', 'Diamond IV', 'Diamond III',
+                 'Diamond II', 'Diamond I', 'Ruby V', 'Ruby IV', 'Ruby III', 'Ruby II', 'Ruby I']
+        return [
+            app_commands.Choice(name=tier_name, value=tier_name)
+            for tier_name in tiers if current.lower() in tier_name.lower()
+        ]
+
+
     async def setui(self):
         tier_icon = File(
             f"resource/rank/{self.tier_id}.png", filename=f"{self.tier_id}.png"
