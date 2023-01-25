@@ -98,3 +98,23 @@ async def _update_role(member: Member, user_data: dict = None) -> None:
     await set_member(member=member, user=user)
     connect_log.info(f"{member.name} tier update: {latest_tier} -> {tier}")
     return
+
+
+def get_user_info(user_id: int) -> dict | bool:
+    with open(USER_DATA_PATH, "r") as f:
+        user_data = json.load(f)
+    try:
+        return user_data[str(user_id)]
+    except KeyError:
+        return False
+
+
+async def remove_user(user: Member) -> None:
+    with open(USER_DATA_PATH, "r") as f:
+        user_data = json.load(f)
+    user_role = get_tier_role(tier=user_data[str(user.id)]["latestTier"])
+    await _remove_role(member=user, role_id=user_role)
+    del user_data[str(user.id)]
+    with open(USER_DATA_PATH, "w") as f:
+        json.dump(user_data, f, indent=4)
+    return

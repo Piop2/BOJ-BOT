@@ -14,6 +14,7 @@ from discord import Object
 import random
 
 import solvedac
+from modules.routine.role import get_user_info, remove_user
 from modules.routine.role import set_member
 from modules.routine.role import change_role
 from modules.routine.role import get_tier_role
@@ -28,12 +29,35 @@ class Login(commands.Cog):
         self.bot = bot
         self.interaction: Interaction
 
-    @app_commands.command(name="connect", description="connect to solved.ac")
-    @app_commands.describe(user_id="user ID on BOJ")
+    @app_commands.command(name="connect", description="connect to solved.ac or remove connection if already connected")
+    @app_commands.describe(user_id="user ID on BOJ(if you are going to remove connection, leave it")
     @app_commands.guilds(Object(id=conf["local"]["server"]))
-    async def connect(self, interaction: Interaction, user_id: str) -> None:
+    async def connect(self, interaction: Interaction, user_id: str = None) -> None:
         self.interaction = interaction
         await interaction.response.defer()
+        info = get_user_info(interaction.user.id)
+        if info and user_id == None:
+            async def button3_callback(interaction: Interaction):
+                await remove_user(interaction.user)
+                embed = Embed(title=f'{interaction.user.name}님과 {info["solvedAcId"]}님의 연결이 해제되었습니다')
+                await self.interaction.edit_original_response(embed=embed, view=None)
+            embed = Embed(title=f'{interaction.user.name}님은 {info["solvedAcId"]}님과 연결되어있습니다',
+                          description='등록을 취소하시려면 아래의 버튼을 눌러주세요')
+            button3 = Button(style=ButtonStyle.red, label="취소", custom_id="cancel")
+            button3.callback = button3_callback
+            view = View()
+            view.add_item(button3)
+            await interaction.followup.send(embed=embed, view=view)
+            return
+        elif user_id == None:
+            embed = Embed(title=f'{interaction.user.name}님은 아무와도 연결되어 있지않아 연결을 헤제할 수 없습니다')
+            await interaction.followup.send(embed=embed)
+            return
+        elif info:
+            embed = Embed(title=f'{interaction.user.name}님은 이미 {info["solvedAcId"]}님과 연결되어있습니다',
+                          description=f'만약 {info["solvedAcId"]}님과 연결을 해제하고 싶다면 /connect명령어를 입력한 후 user_id를 빈칸으로 남겨두세요')
+            await interaction.followup.send(embed=embed)
+            return
 
         try:
             user = solvedac.get_user(user_id=user_id)
