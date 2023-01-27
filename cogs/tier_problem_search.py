@@ -14,8 +14,9 @@ from discord import SelectOption
 from discord.ui import Button, View
 from discord import ButtonStyle
 from discord import Interaction
-from cogs.problem import send_problem
 
+from cogs.problem import send_problem
+from cogs.problem import send_problem_img
 import solvedac
 from solvedac.utils.rank import get_rank_id
 from utils.logger import get_logger
@@ -38,13 +39,15 @@ class SearchTierProblem(commands.Cog):
         self.tier_name: str
         self.interaction: Interaction
         self.response: Interaction.InteractionResponse
+        self.img: bool
 
     @app_commands.command(name="tier", description="search Tier Problems with Tier Name")
-    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)")
-    async def search(self, interaction: Interaction, tier_name: str) -> None:
+    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)", img="whether to send image or not")
+    async def search(self, interaction: Interaction, tier_name: str, img: bool = False) -> None:
         self.interaction = interaction
         self.tier_id = get_rank_id(tier_name)
         self.tier_name = tier_name
+        self.img = img
         await self.interaction.response.defer()
         try:
             self.tier_problem = solvedac.get_tier_problem(tier_id=self.tier_id)
@@ -87,7 +90,10 @@ class SearchTierProblem(commands.Cog):
         self.embed.set_thumbnail(url=f"attachment://{self.tier_id}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            await send_problem(int(self.selects.values[0]), interaction)
+            if self.img:
+                await send_problem_img(int(self.selects.values[0]), interaction)
+            else:
+                await send_problem(int(self.selects.values[0]), interaction)
 
         async def button1_callback(interaction: Interaction):
             self.page += 1

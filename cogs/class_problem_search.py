@@ -14,8 +14,9 @@ from discord import SelectOption
 from discord.ui import Button, View
 from discord import ButtonStyle
 from discord import Interaction
-from cogs.problem import send_problem
 
+from cogs.problem import send_problem
+from cogs.problem import send_problem_img
 import solvedac
 from utils.logger import get_logger
 
@@ -36,10 +37,12 @@ class SearchClassProblem(commands.Cog):
         self.class_id: int
         self.interaction: Interaction
         self.response: Interaction.InteractionResponse
+        self.img: bool
 
     @app_commands.command(name="class", description="search Class Problems with ID")
-    @app_commands.describe(class_id="class ID registered on solved.ac(1~10)")
-    async def search(self, interaction: Interaction, class_id: int) -> None:
+    @app_commands.describe(class_id="class ID registered on solved.ac(1~10)", img="whether to send image or not")
+    async def search(self, interaction: Interaction, class_id: int, img: bool = False) -> None:
+        self.img = img
         self.interaction = interaction
         self.class_id = class_id
         await self.interaction.response.defer()
@@ -72,7 +75,10 @@ class SearchClassProblem(commands.Cog):
         self.embed.set_thumbnail(url=f"attachment://{3*self.class_id+1}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            await send_problem(int(self.selects.values[0]), interaction)
+            if self.img:
+                await send_problem_img(int(self.selects.values[0]), interaction)
+            else:
+                await send_problem(int(self.selects.values[0]), interaction)
 
         async def button1_callback(interaction: Interaction):
             self.page += 1

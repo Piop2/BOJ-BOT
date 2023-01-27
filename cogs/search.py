@@ -12,6 +12,7 @@ from discord import Interaction
 from utils.logger import get_logger
 from solvedac.api.search_suggestion import search_suggestion
 from cogs.problem import send_problem
+from cogs.problem import send_problem_img
 from cogs.user import send_user
 
 problem_log = get_logger("cmd.search")
@@ -22,11 +23,14 @@ class Search(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="search", description="search solved.ac")
-    @app_commands.describe(keyword="search keyword")
-    async def search(self, interaction: Interaction, keyword: str) -> None:
+    @app_commands.describe(keyword="search keyword", img="whether to send image or not")
+    async def search(self, interaction: Interaction, keyword: str, img: bool = False) -> None:
         try:
             keyword = int(keyword)
-            await send_problem(problem_id=keyword, interaction=interaction)
+            if img:
+                await send_problem_img(problem_id=keyword, interaction=interaction)
+            else:
+                await send_problem(problem_id=keyword, interaction=interaction)
         except ValueError:
             await send_user(user_id=keyword, interaction=interaction)
 

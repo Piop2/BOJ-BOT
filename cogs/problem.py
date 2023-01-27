@@ -11,11 +11,12 @@ from discord import Interaction
 
 import solvedac
 from utils.logger import get_logger
+from modules.draw.problem import make_thumbnail
 
 problem_log = get_logger("send.problem")
 
 
-async def send_problem(problem_id: int, interaction: Interaction):
+async def send_problem(problem_id: int, interaction: Interaction) -> None:
     await interaction.response.defer()
 
     try:
@@ -40,33 +41,29 @@ async def send_problem(problem_id: int, interaction: Interaction):
         embed=embed, file=rank_icon, ephemeral=False
     )
     problem_log.info(f"problem found: {problem_id}")
+    return
 
-# @app_commands.command(name="problem-img", description="search BOJ problem with ID")
-# @app_commands.describe(problem_id="problem ID registered on BOJ")
-# async def search_img(self, interaction: Interaction, problem_id: int) -> None:
-#     try:
-#         problem = solvedac.get_problem(problem_id=problem_id)
-#     except solvedac.ProblemNotExistError:
-#         await interaction.response.send_message(
-#             f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
-#         )
-#         problem_log.warning(f"problem does not exist: {problem_id}")
-#         return
-#
-#     make_thumbnail(problem=problem)
-#     file = File(fp="temp/problem_thumbnail.png", filename=f"problem_{problem_id}.png")
-#     embed = Embed(title="보러 가기", url=problem.url)
-#     embed.set_image(url=f"attachment://problem_{problem_id}.png")
-#
-#     await interaction.response.send_message(
-#         embed=embed, file=file, ephemeral=False
-#     )
-#
-#     problem_log.info(f"problem found: {problem_id}")
-#     return
 
-# @search_img.error
-# async def search_img_handler(self, ctx, error):
-#     problem_log.error(error)
-#     await ctx.response.send_message(content="예상치 못한 오류 발생", ephemeral=True)
-#     return
+async def send_problem_img(problem_id: int, interaction: Interaction) -> None:
+    await interaction.response.defer()
+
+    try:
+        problem = solvedac.get_problem(problem_id=problem_id)
+    except solvedac.ProblemNotExistError:
+        await interaction.response.send_message(
+            f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
+        )
+        problem_log.warning(f"problem does not exist: {problem_id}")
+        return
+
+    make_thumbnail(problem=problem)
+    file = File(fp="temp/problem_thumbnail.png", filename=f"problem_{problem_id}.png")
+    embed = Embed(title="보러 가기", url=problem.url)
+    embed.set_image(url=f"attachment://problem_{problem_id}.png")
+
+    await interaction.followup.send(
+        embed=embed, file=file, ephemeral=False
+    )
+
+    problem_log.info(f"problem found: {problem_id}")
+    return
