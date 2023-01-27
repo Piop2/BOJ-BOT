@@ -68,7 +68,7 @@ class SearchClassProblem(commands.Cog):
         self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
         self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
         self.embed = Embed(title=f"Class {self.class_id}",
-            description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.class_problem)//25}페이지')
+            description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.class_problem)//25+1}페이지')
         self.embed.set_thumbnail(url=f"attachment://{3*self.class_id+1}.png")
 
         async def select_callback(interaction: Interaction) -> None:
@@ -77,10 +77,12 @@ class SearchClassProblem(commands.Cog):
         async def button1_callback(interaction: Interaction):
             self.page += 1
             await self.setui()
+            await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
             self.page -= 1
             await self.setui()
+            await interaction.response.defer()
 
         self.selects.callback = select_callback
         self.button1.callback = button1_callback
