@@ -86,7 +86,7 @@ class SearchTierProblem(commands.Cog):
         self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
         self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
         self.embed = Embed(title=f"{self.tier_name}",
-                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.tier_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.tier_problem)//25}페이지')
+                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.tier_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.tier_problem)//25+1}페이지')
         self.embed.set_thumbnail(url=f"attachment://{self.tier_id}.png")
 
         async def select_callback(interaction: Interaction) -> None:
@@ -98,10 +98,12 @@ class SearchTierProblem(commands.Cog):
         async def button1_callback(interaction: Interaction):
             self.page += 1
             await self.setui()
+            await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
             self.page -= 1
             await self.setui()
+            await interaction.response.defer()
 
         self.selects.callback = select_callback
         self.button1.callback = button1_callback
