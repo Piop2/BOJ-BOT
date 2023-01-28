@@ -12,7 +12,7 @@ CONFIG_PATH = "config.toml"
 if version_info.minor >= 11:
     import tomllib
 
-    with open(CONFIG_PATH, "rb", encoding="UTF-8") as f:
+    with open(CONFIG_PATH, "rb") as f:
         conf = tomllib.load(f)
 
 else:
