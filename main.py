@@ -1,4 +1,4 @@
-__version__ = "0.4.5"
+__version__ = "1.0.0"
 
 from discord import Activity
 from discord import ActivityType
