@@ -14,13 +14,13 @@
       "formatter": "simple",
       "level": "DEBUG"
     },
-    "logFile": {
+    "error_log": {
       "class": "logging.FileHandler",
       "filename": "error.log",
       "formatter": "logFile",
       "level": "ERROR"
     },
-    "logFile": {
+    "every_log": {
       "class": "logging.FileHandler",
       "filename": "logs.log",
       "formatter": "logFile",
@@ -30,7 +30,8 @@
   "root": {
     "handlers": [
       "console",
-      "logFile"
+      "error_log",
+      "every_log"
     ],
     "level": "INFO"
   },
