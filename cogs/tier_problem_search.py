@@ -30,9 +30,9 @@ class SearchTierProblem(commands.Cog):
         self.instance: dict[int, dict[str: any]] = {}
 
     @app_commands.command(name="tier", description="search Tier Problems with Tier Name")
-    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)",
-                           img="whether to send image or not")
-    async def search(self, interaction: Interaction, tier_name: str, img: bool = False) -> None:
+    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)")
+    async def search(self, interaction: Interaction, tier_name: str) -> None:
+        img = False
         tier_log.info(f"tier command used: {interaction.user.id}, {tier_name}, {img}")
         if interaction.user.id in self.instance:
             await self.instance[interaction.user.id]["interaction"].delete_original_response()

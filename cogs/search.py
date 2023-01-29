@@ -23,8 +23,9 @@ class Search(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="search", description="search solved.ac")
-    @app_commands.describe(keyword="search keyword", img="whether to send image or not")
-    async def search(self, interaction: Interaction, keyword: str, img: bool = False) -> None:
+    @app_commands.describe(keyword="search keyword")
+    async def search(self, interaction: Interaction, keyword: str) -> None:
+        img = False
         search_log.info(f"search command used: {interaction.user.id}, {keyword}")
         try:
             keyword = int(keyword)

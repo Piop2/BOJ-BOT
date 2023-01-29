@@ -29,8 +29,9 @@ class SearchClassProblem(commands.Cog):
         self.instance: dict[int, dict[str: any]] = {}
 
     @app_commands.command(name="class", description="search Class Problems with ID")
-    @app_commands.describe(class_id="class ID registered on solved.ac(1~10)", img="whether to send image or not")
-    async def search(self, interaction: Interaction, class_id: int, img: bool = False) -> None:
+    @app_commands.describe(class_id="class ID registered on solved.ac(1~10)")
+    async def search(self, interaction: Interaction, class_id: int) -> None:
+        img = False
         class_log.info(f"class command used: {interaction.user.id}, {class_id}, {img}")
         if interaction.user.id in self.instance:
             await self.instance[interaction.user.id]["interaction"].delete_original_response()
