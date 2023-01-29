@@ -27,18 +27,18 @@ connect_log = get_logger("cmd.connect")
 class Login(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.interaction: Interaction
+        self.interaction: dict[int: Interaction] = {}
 
     @app_commands.command(name="connect", description="connect to solved.ac or remove")
     @app_commands.describe(user_id="user ID on BOJ(blank to remove connect)")
     @app_commands.guilds(Object(id=conf["local"]["server"]))
     async def connect(self, interaction: Interaction, user_id: str = None) -> None:
-        self.interaction = interaction
+        self.interaction[interaction.user.id] = interaction
         await interaction.response.defer(ephemeral=True)
         connect_log.info(f"{interaction.user.name} used connect command")
 
         info = get_user_info(interaction.user.id)
-        if info and user_id == None:
+        if info and user_id is None:
 
             async def button3_callback(interaction: Interaction):
                 await remove_user(interaction.user)
@@ -48,7 +48,7 @@ class Login(commands.Cog):
                 connect_log.info(
                     f"{interaction.user.name} disconnected connection with {info['solvedAcId']}"
                 )
-                await self.interaction.edit_original_response(embed=embed, view=None)
+                await self.interaction[interaction.user.id].edit_original_response(embed=embed, view=None)
 
             embed = Embed(
                 title=f'{interaction.user.name}님은 {info["solvedAcId"]}님과 연결되어있습니다',
@@ -61,7 +61,7 @@ class Login(commands.Cog):
             await interaction.followup.send(embed=embed, view=view)
             return
 
-        elif user_id == None:
+        elif user_id is None:
             embed = Embed(
                 title=f"{interaction.user.name}님은 아무와도 연결되어 있지않아 연결을 헤제할 수 없습니다"
             )
@@ -126,14 +126,14 @@ class Login(commands.Cog):
                 await change_role(
                     member=interaction.user, new_role=get_tier_role(user=user)
                 )
-                await self.interaction.edit_original_response(embed=embed, view=None)
+                await self.interaction[interaction.user.id].edit_original_response(embed=embed, view=None)
             else:
                 if attempt > 5:
                     embed = Embed(
                         title="등록이 최소되었습니다",
                         description="등록을 너무 많이 시도하셨습니다\n등록 절차를 강제로 중단합니다.",
                     )
-                    await self.interaction.edit_original_response(
+                    await self.interaction[interaction.user.id].edit_original_response(
                         embed=embed, view=None
                     )
                 else:
@@ -161,12 +161,12 @@ class Login(commands.Cog):
                         .set_footer(text="모바일에서는 코드를 꾹 누르면 복사가 됩니다")
                     )
                     attempt += 1
-                    await self.interaction.edit_original_response(embed=embed)
+                    await self.interaction[interaction.user.id].edit_original_response(embed=embed)
                     await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
             embed = Embed(title="등록을 취소하셨습니다", description="등록절차가 중단되었습니다")
-            await self.interaction.edit_original_response(embed=embed, view=None)
+            await self.interaction[interaction.user.id].edit_original_response(embed=embed, view=None)
 
         button1.callback = button1_callback
         button2.callback = button2_callback
@@ -176,7 +176,8 @@ class Login(commands.Cog):
         await interaction.followup.send(embed=embed, view=view)
         return
 
-    async def check_certification(self, key: str, user_id: str) -> bool:
+    @staticmethod
+    async def check_certification(key: str, user_id: str) -> bool:
         user = solvedac.get_user(user_id=user_id)
         if key in user.bio:
             return True
