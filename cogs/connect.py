@@ -132,6 +132,7 @@ class Login(commands.Cog):
                     member=interaction.user, new_role=get_tier_role(user=user)
                 )
                 await self.interaction[interaction.user.id].edit_original_response(embed=embed, view=None)
+                del self.interaction[interaction.user.id]
             else:
                 if attempt > 5:
                     embed = Embed(
