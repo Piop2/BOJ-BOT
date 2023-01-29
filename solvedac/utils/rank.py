@@ -36,3 +36,7 @@ RANK = {
 
 def get_rank(level: int) -> str:
     return RANK[level]
+
+
+def get_rank_id(rank: str) -> int:
+    return list(RANK.keys())[list(RANK.values()).index(rank)]

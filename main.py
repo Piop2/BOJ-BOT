@@ -23,7 +23,10 @@ class Bot(commands.Bot):
             command_prefix="!", intents=intents, sync_command=True
         )
 
-        self.all_cogs = ["cogs.problem_search", "cogs.user_search", "cogs.connect"]
+        self.all_cogs = ["cogs.search",
+                         "cogs.connect",
+                         "cogs.class_problem_search",
+                         "cogs.tier_problem_search"]
 
     async def setup_hook(self):
         for ext in self.all_cogs:

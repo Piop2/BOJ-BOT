@@ -19,6 +19,12 @@
       "filename": "error.log",
       "formatter": "logFile",
       "level": "ERROR"
+    },
+    "logFile": {
+      "class": "logging.FileHandler",
+      "filename": "logs.log",
+      "formatter": "logFile",
+      "level": "INFO"
     }
   },
   "root": {
@@ -29,10 +35,19 @@
     "level": "INFO"
   },
   "loggers": {
-    "cmd.problem": {
+    "send.problem": {
       "level": "INFO"
     },
-    "cmd.user": {
+    "cmd.class_problem": {
+      "level": "INFO"
+    },
+    "cmd.tier_problem": {
+      "level": "INFO"
+    },
+    "cmd.search": {
+      "level": "INFO"
+    },
+    "send.user": {
       "level": "INFO"
     },
     "cmd.connect": {
