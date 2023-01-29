@@ -35,7 +35,10 @@ class SearchTierProblem(commands.Cog):
         img = False
         tier_log.info(f"tier command used: {interaction.user.id}, {tier_name}, {img}")
         if interaction.user.id in self.instance:
-            await self.instance[interaction.user.id]["interaction"].delete_original_response()
+            try:
+                await self.instance[interaction.user.id]["interaction"].delete_original_response()
+            except:
+                pass
         tier_id = get_rank_id(tier_name)
         self.instance[interaction.user.id] = {"interaction": interaction, "page": 0, "first": True,
                                               "img": img, "tier_id": tier_id, "tier_name": tier_name}

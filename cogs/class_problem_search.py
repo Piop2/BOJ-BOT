@@ -34,7 +34,10 @@ class SearchClassProblem(commands.Cog):
         img = False
         class_log.info(f"class command used: {interaction.user.id}, {class_id}, {img}")
         if interaction.user.id in self.instance:
-            await self.instance[interaction.user.id]["interaction"].delete_original_response()
+            try:
+                await self.instance[interaction.user.id]["interaction"].delete_original_response()
+            except:
+                pass
         self.instance[interaction.user.id] = {"interaction": interaction, "page": 0, "first": True,
                                               "img": img, "class_id": class_id}
         await interaction.response.defer(ephemeral=True)
