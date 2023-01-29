@@ -52,7 +52,7 @@ class SearchTierProblem(commands.Cog):
         await self.set_ui(interaction.user.id)
 
     @search.autocomplete('tier_name')
-    async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+    async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice]:
         tiers = ['Bronze V', 'Bronze IV', 'Bronze III', 'Bronze II', 'Bronze I',
                  'Silver V', 'Silver IV', 'Silver III', 'Silver II', 'Silver I',
                  'Gold V', 'Gold IV', 'Gold III', 'Gold II', 'Gold I',

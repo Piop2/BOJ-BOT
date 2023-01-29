@@ -36,7 +36,7 @@ class Search(commands.Cog):
             await send_user(user_id=keyword, interaction=interaction)
 
     @search.autocomplete('keyword')
-    async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+    async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice]:
         suggestions = search_suggestion(query=current)
         problems = {f'{i["id"]}': f'{i["id"]}. {i["title"]}' for i in suggestions["problems"]}
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
