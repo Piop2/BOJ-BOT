@@ -21,6 +21,7 @@ async def send_problem(problem_id: int, interaction: Interaction, ephemeral: boo
 
     try:
         problem = solvedac.get_problem(problem_id=problem_id)
+        problem_log.info(f"problem found: {problem_id}")
     except solvedac.ProblemNotExistError:
         await interaction.followup.send(
             f"ERROR problem id '{problem_id}' does not exist"
@@ -40,7 +41,7 @@ async def send_problem(problem_id: int, interaction: Interaction, ephemeral: boo
     await interaction.followup.send(
         embed=embed, file=rank_icon, ephemeral=ephemeral
     )
-    problem_log.info(f"problem found: {problem_id}")
+    problem_log.info(f"problem info sent: {problem_id}")
     return
 
 
@@ -49,6 +50,7 @@ async def send_problem_img(problem_id: int, interaction: Interaction, ephemeral:
 
     try:
         problem = solvedac.get_problem(problem_id=problem_id)
+        problem_log.info(f"problem found: {problem_id}")
     except solvedac.ProblemNotExistError:
         await interaction.response.send_message(
             f"ERROR problem id '{problem_id}' does not exist"
@@ -57,6 +59,7 @@ async def send_problem_img(problem_id: int, interaction: Interaction, ephemeral:
         return
 
     make_thumbnail(problem=problem)
+    problem_log.info(f"problem info image created: {problem_id}")
     file = File(fp="temp/problem_thumbnail.png", filename=f"problem_{problem_id}.png")
     embed = Embed(title="보러 가기", url=problem.url)
     embed.set_image(url=f"attachment://problem_{problem_id}.png")
@@ -65,5 +68,5 @@ async def send_problem_img(problem_id: int, interaction: Interaction, ephemeral:
         embed=embed, file=file, ephemeral=ephemeral
     )
 
-    problem_log.info(f"problem found: {problem_id}")
+    problem_log.info(f"problem info image sent: {problem_id}")
     return

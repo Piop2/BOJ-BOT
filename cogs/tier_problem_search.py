@@ -21,7 +21,7 @@ import solvedac
 from solvedac.utils.rank import get_rank_id
 from utils.logger import get_logger
 
-problem_log = get_logger("cmd.tier_problem")
+tier_log = get_logger("cmd.tier_problem")
 
 
 class SearchTierProblem(commands.Cog):
@@ -33,6 +33,7 @@ class SearchTierProblem(commands.Cog):
     @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)",
                            img="whether to send image or not")
     async def search(self, interaction: Interaction, tier_name: str, img: bool = False) -> None:
+        tier_log.info(f"tier command used: {interaction.user.id}, {tier_name}, {img}")
         if interaction.user.id in self.instance:
             await self.instance[interaction.user.id]["interaction"].delete_original_response()
         tier_id = get_rank_id(tier_name)
@@ -41,14 +42,14 @@ class SearchTierProblem(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         try:
             self.instance[interaction.user.id]["tier_problem"] = solvedac.get_tier_problem(tier_id=tier_id)
+            tier_log.info(f"tier problem found: {tier_name}")
         except solvedac.TierNotExistError:
             await interaction.followup.send(
                 f"ERROR tier '{tier_name}' does not exist"
             )
-            problem_log.warning(f"Tier problem does not exist: {tier_name}")
+            tier_log.warning(f"Tier problem does not exist: {tier_name}")
             return
         await self.set_ui(interaction.user.id)
-        problem_log.info(f"tier problem found: {tier_name}")
 
     @search.autocomplete('tier_name')
     async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
@@ -85,6 +86,8 @@ class SearchTierProblem(commands.Cog):
         self.instance[id]['embed'].set_thumbnail(url=f"attachment://{self.instance[id]['tier_id']}.png")
 
         async def select_callback(interaction: Interaction) -> None:
+            tier_log.info(f"select menu selected: {interaction.user.id}, "
+                          f"{self.instance[interaction.user.id]['selects'].values[0]}")
             if self.instance[interaction.user.id]['img']:
                 await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
                                        interaction=interaction, ephemeral=True)
@@ -93,11 +96,13 @@ class SearchTierProblem(commands.Cog):
                                    interaction=interaction, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
+            tier_log.info(f"button1 clicked: {interaction.user.id}")
             self.instance[interaction.user.id]['page'] += 1
             await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
+            tier_log.info(f"button2 clicked: {interaction.user.id}")
             self.instance[interaction.user.id]['page'] -= 1
             await self.set_ui(interaction.user.id)
             await interaction.response.defer()
@@ -116,14 +121,16 @@ class SearchTierProblem(commands.Cog):
             await self.instance[id]['interaction'].followup.send(embed=self.instance[id]['embed'],
                                                                  view=self.instance[id]['view'],
                                                                  file=tier_icon, ephemeral=False)
+            tier_log.info(f"tier problem sent: {id}, {self.instance[id]['tier_name']}")
             self.instance[id]['first'] = False
         else:
             await self.instance[id]['interaction'].edit_original_response(embed=self.instance[id]['embed'],
                                                                           view=self.instance[id]['view'])
+            tier_log.info(f"tier problem edited: {id}, {self.instance[id]['tier_name']}")
 
     @search.error
     async def search_handler(self, ctx, error):
-        problem_log.error(error)
+        tier_log.error(error)
         await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
         return
 

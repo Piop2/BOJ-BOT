@@ -20,7 +20,7 @@ from cogs.problem import send_problem_img
 import solvedac
 from utils.logger import get_logger
 
-problem_log = get_logger("cmd.class_problem")
+class_log = get_logger("cmd.class_problem")
 
 
 class SearchClassProblem(commands.Cog):
@@ -31,6 +31,7 @@ class SearchClassProblem(commands.Cog):
     @app_commands.command(name="class", description="search Class Problems with ID")
     @app_commands.describe(class_id="class ID registered on solved.ac(1~10)", img="whether to send image or not")
     async def search(self, interaction: Interaction, class_id: int, img: bool = False) -> None:
+        class_log.info(f"class command used: {interaction.user.id}, {class_id}, {img}")
         if interaction.user.id in self.instance:
             await self.instance[interaction.user.id]["interaction"].delete_original_response()
         self.instance[interaction.user.id] = {"interaction": interaction, "page": 0, "first": True,
@@ -38,14 +39,14 @@ class SearchClassProblem(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         try:
             self.instance[interaction.user.id]["class_problem"] = solvedac.get_class_problem(class_id=class_id)
+            class_log.info(f"class problem found: {class_id}")
         except solvedac.ClassNotExistError:
             await interaction.followup.send(
                 f"ERROR class id '{class_id}' does not exist"
             )
-            problem_log.warning(f"class problem does not exist: {class_id}")
+            class_log.warning(f"class problem does not exist: {class_id}")
             return
         await self.set_ui(interaction.user.id)
-        problem_log.info(f"class problem found: {class_id}")
 
     async def set_ui(self, id: int):
         class_icon = File(
@@ -71,6 +72,8 @@ class SearchClassProblem(commands.Cog):
         self.instance[id]['embed'].set_thumbnail(url=f"attachment://{3*self.instance[id]['class_id']+1}.png")
 
         async def select_callback(interaction: Interaction) -> None:
+            class_log.info(f"select menu selected: {interaction.user.id}, "
+                           f"{self.instance[interaction.user.id]['selects'].values[0]}")
             if self.instance[interaction.user.id]['img']:
                 await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
                                        interaction=interaction, ephemeral=True)
@@ -79,11 +82,13 @@ class SearchClassProblem(commands.Cog):
                                    interaction=interaction, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
+            class_log.info(f"button1 clicked: {interaction.user.id}")
             self.instance[interaction.user.id]['page'] += 1
             await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
+            class_log.info(f"button2 clicked: {interaction.user.id}")
             self.instance[interaction.user.id]['page'] -= 1
             await self.set_ui(interaction.user.id)
             await interaction.response.defer()
@@ -102,14 +107,16 @@ class SearchClassProblem(commands.Cog):
             await self.instance[id]["interaction"].followup.send(embed=self.instance[id]['embed'],
                                                                  view=self.instance[id]['view'],
                                                                  file=class_icon)
+            class_log.info(f"class problem sent: {id}, {self.instance[id]['class_id']}")
             self.instance[id]['first'] = False
         else:
             await self.instance[id]["interaction"].edit_original_response(embed=self.instance[id]['embed'],
                                                                           view=self.instance[id]['view'])
+            class_log.info(f"class problem edited: {id}, {self.instance[id]['class_id']}")
 
     @search.error
     async def search_handler(self, ctx, error):
-        problem_log.error(error)
+        class_log.error(error)
         await ctx.followup.send(content="예상치 못한 오류 발생")
         return
 

@@ -15,7 +15,7 @@ from cogs.problem import send_problem
 from cogs.problem import send_problem_img
 from cogs.user import send_user
 
-problem_log = get_logger("cmd.search")
+search_log = get_logger("cmd.search")
 
 
 class Search(commands.Cog):
@@ -25,6 +25,7 @@ class Search(commands.Cog):
     @app_commands.command(name="search", description="search solved.ac")
     @app_commands.describe(keyword="search keyword", img="whether to send image or not")
     async def search(self, interaction: Interaction, keyword: str, img: bool = False) -> None:
+        search_log.info(f"search command used: {interaction.user.id}, {keyword}")
         try:
             keyword = int(keyword)
             if img:
@@ -40,11 +41,12 @@ class Search(commands.Cog):
         problems = {f'{i["id"]}': f'{i["id"]}. {i["title"]}' for i in suggestions["problems"]}
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
         suggestions = {**problems, **users}
+        search_log.info(f"search suggestions found: {current}")
         return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if True]
 
     @search.error
     async def search_handler(self, ctx, error):
-        problem_log.error(error)
+        search_log.error(error)
         await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
         return
 

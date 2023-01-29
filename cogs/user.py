@@ -20,6 +20,7 @@ async def send_user(interaction: Interaction, user_id: str, ephemeral: bool = Fa
 
     try:
         user = solvedac.get_user(user_id=user_id)
+        user_log.info(f"user found: {user_id}")
     except solvedac.UserNotExistError:
         await interaction.followup.send(
             f"ERROR user id '{user_id}' does not exist"
@@ -68,5 +69,5 @@ async def send_user(interaction: Interaction, user_id: str, ephemeral: bool = Fa
     await interaction.followup.send(
         embed=embed, files=files
     )
-    user_log.info(f"user found: {user_id}")
+    user_log.info(f"user info sent: {user_id}")
     return
