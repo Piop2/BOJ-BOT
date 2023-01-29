@@ -37,7 +37,7 @@ class Login(commands.Cog):
             await self.interaction[interaction.user.id].delete_original_response()
         self.interaction[interaction.user.id] = interaction
         await interaction.response.defer(ephemeral=True)
-        connect_log.info(f"{interaction.user.name} used connect command")
+        connect_log.info(f"connect command used: {interaction.user.id}, {user_id}")
 
         info = get_user_info(interaction.user.id)
         if info and user_id is None:
@@ -138,6 +138,7 @@ class Login(commands.Cog):
                     await self.interaction[interaction.user.id].edit_original_response(
                         embed=embed, view=None
                     )
+                    connect_log.warning(f"{interaction.user.name} failed to connect to {user.name}")
                 else:
                     embed = (
                         Embed(
@@ -162,8 +163,9 @@ class Login(commands.Cog):
                         )
                         .set_footer(text="모바일에서는 코드를 꾹 누르면 복사가 됩니다")
                     )
-                    attempt += 1
                     await self.interaction[interaction.user.id].edit_original_response(embed=embed)
+                    connect_log.info(f"{interaction.user.name} attempted to connect to {user.name}: {attempt}")
+                    attempt += 1
                     await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
