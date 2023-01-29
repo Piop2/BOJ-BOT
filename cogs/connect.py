@@ -143,7 +143,7 @@ class Login(commands.Cog):
                     embed = (
                         Embed(
                             title=f"{user.name}님의 유저 등록에 실패했습니다",
-                            description=f"인즏에 실패했습니다. 다시 시도해주세요 ( {attempt} / 5 )",
+                            description=f"인증에 실패했습니다. 다시 시도해주세요 ( {attempt} / 5 )",
                         )
                         .add_field(
                             name="1. 로그인",
