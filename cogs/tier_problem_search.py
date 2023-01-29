@@ -27,101 +27,99 @@ problem_log = get_logger("cmd.tier_problem")
 class SearchTierProblem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.page = 0
-        self.first = True
-        self.embed: Embed
-        self.view: View
-        self.selects: Select
-        self.button1: Button
-        self.button2: Button
-        self.tier_problem: list
-        self.tier_id: int
-        self.tier_name: str
-        self.interaction: Interaction
-        self.response: Interaction.InteractionResponse
-        self.img: bool
+        self.instance: dict[int, dict[str: any]] = {}
 
     @app_commands.command(name="tier", description="search Tier Problems with Tier Name")
-    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)", img="whether to send image or not")
+    @app_commands.describe(tier_name="tier Name registered on solved.ac(ex.Bronze V)",
+                           img="whether to send image or not")
     async def search(self, interaction: Interaction, tier_name: str, img: bool = False) -> None:
-        self.interaction = interaction
-        self.tier_id = get_rank_id(tier_name)
-        self.tier_name = tier_name
-        self.img = img
-        await self.interaction.response.defer()
+        if interaction.user.id in self.instance:
+            await self.instance[interaction.user.id]["interaction"].delete_original_response()
+        tier_id = get_rank_id(tier_name)
+        self.instance[interaction.user.id] = {"interaction": interaction, "page": 0, "first": True,
+                                              "img": img, "tier_id": tier_id, "tier_name": tier_name}
+        await interaction.response.defer(ephemeral=True)
         try:
-            self.tier_problem = solvedac.get_tier_problem(tier_id=self.tier_id)
+            self.instance[interaction.user.id]["tier_problem"] = solvedac.get_tier_problem(tier_id=tier_id)
         except solvedac.TierNotExistError:
             await interaction.followup.send(
-                f"ERROR tier '{self.tier_name}' does not exist", ephemeral=False
+                f"ERROR tier '{tier_name}' does not exist"
             )
-            problem_log.warning(f"Tier problem does not exist: {self.tier_name}")
+            problem_log.warning(f"Tier problem does not exist: {tier_name}")
             return
-        await self.setui()
-        problem_log.info(f"tier problem found: {self.tier_name}")
-
+        await self.set_ui(interaction.user.id)
+        problem_log.info(f"tier problem found: {tier_name}")
 
     @search.autocomplete('tier_name')
     async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
-        tiers = ['Bronze V', 'Bronze IV', 'Bronze III', 'Bronze II', 'Bronze I', 'Silver V', 'Silver IV',
-                 'Silver III', 'Silver II', 'Silver I', 'Gold V', 'Gold IV', 'Gold III', 'Gold II', 'Gold I', 'Platinum V',
-                 'Platinum IV', 'Platinum III', 'Platinum II', 'Platinum I', 'Diamond V', 'Diamond IV', 'Diamond III',
-                 'Diamond II', 'Diamond I', 'Ruby V', 'Ruby IV', 'Ruby III', 'Ruby II', 'Ruby I']
+        tiers = ['Bronze V', 'Bronze IV', 'Bronze III', 'Bronze II', 'Bronze I',
+                 'Silver V', 'Silver IV', 'Silver III', 'Silver II', 'Silver I',
+                 'Gold V', 'Gold IV', 'Gold III', 'Gold II', 'Gold I',
+                 'Platinum V', 'Platinum IV', 'Platinum III', 'Platinum II', 'Platinum I',
+                 'Diamond V', 'Diamond IV', 'Diamond III', 'Diamond II', 'Diamond I',
+                 'Ruby V', 'Ruby IV', 'Ruby III', 'Ruby II', 'Ruby I']
         return [
             app_commands.Choice(name=tier_name, value=tier_name)
             for tier_name in tiers if current.lower() in tier_name.lower()
         ]
 
-
-    async def setui(self):
+    async def set_ui(self, id: int):
         tier_icon = File(
-            f"resource/rank/{self.tier_id}.png", filename=f"{self.tier_id}.png"
+            f"resource/rank/{self.instance[id]['tier_id']}.png", filename=f"{self.instance[id]['tier_id']}.png"
         )
-        self.selects = Select(
+        self.instance[id]['selects'] = Select(
             options=[
                 SelectOption(label=f"{i.id}. {i.title}", value=i.id)
-                for i in self.tier_problem[self.page*25:self.page*25+25]
+                for i in self.instance[id]['tier_problem'][self.instance[id]['page']*25:self.instance[id]['page']*25+25]
             ]
         )
-        self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
-        self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
-        self.embed = Embed(title=f"{self.tier_name}",
-                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.tier_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.tier_problem)//25+1}페이지')
-        self.embed.set_thumbnail(url=f"attachment://{self.tier_id}.png")
+        self.instance[id]['button1'] = Button(label="다음 페이지", style=ButtonStyle.primary)
+        self.instance[id]['button2'] = Button(label="이전 페이지", style=ButtonStyle.danger)
+        self.instance[id]['embed'] = Embed(title=f"{self.instance[id]['tier_name']}",
+                                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})"
+                                                                  for i in self.instance[id]['tier_problem']
+                                                                  [self.instance[id]['page']*25:
+                                                                   self.instance[id]['page']*25+25]])
+                                                       + f'\n\n{self.instance[id]["page"]+1}/'
+                                                         f'{len(self.instance[id]["tier_problem"])//25+1}페이지')
+        self.instance[id]['embed'].set_thumbnail(url=f"attachment://{self.instance[id]['tier_id']}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            if self.img:
-                await send_problem_img(int(self.selects.values[0]), interaction)
+            if self.instance[interaction.user.id]['img']:
+                await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
+                                       interaction=interaction, ephemeral=True)
             else:
-                await send_problem(int(self.selects.values[0]), interaction)
+                await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
+                                   interaction=interaction, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
-            self.page += 1
-            await self.setui()
+            self.instance[interaction.user.id]['page'] += 1
+            await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
-            self.page -= 1
-            await self.setui()
+            self.instance[interaction.user.id]['page'] -= 1
+            await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
-        self.selects.callback = select_callback
-        self.button1.callback = button1_callback
-        self.button2.callback = button2_callback
-        self.view = View()
-        self.view.add_item(self.selects)
-        if self.page != 0:
-            self.view.add_item(self.button2)
-        if self.page != len(self.tier_problem)//25:
-            self.view.add_item(self.button1)
+        self.instance[id]['selects'].callback = select_callback
+        self.instance[id]['button1'].callback = button1_callback
+        self.instance[id]['button2'].callback = button2_callback
+        self.instance[id]['view'] = View()
+        self.instance[id]['view'].add_item(self.instance[id]['selects'])
+        if self.instance[id]['page'] != 0:
+            self.instance[id]['view'].add_item(self.instance[id]['button2'])
+        if self.instance[id]['page'] != len(self.instance[id]['tier_problem'])//25:
+            self.instance[id]['view'].add_item(self.instance[id]['button1'])
 
-
-        if self.first == True:
-            await self.interaction.followup.send(embed=self.embed, view=self.view, file=tier_icon, ephemeral=False)
-            self.first = False
+        if self.instance[id]['first']:
+            await self.instance[id]['interaction'].followup.send(embed=self.instance[id]['embed'],
+                                                                 view=self.instance[id]['view'],
+                                                                 file=tier_icon, ephemeral=False)
+            self.instance[id]['first'] = False
         else:
-            await self.interaction.edit_original_response(embed=self.embed, view=self.view)
-
+            await self.instance[id]['interaction'].edit_original_response(embed=self.instance[id]['embed'],
+                                                                          view=self.instance[id]['view'])
 
     @search.error
     async def search_handler(self, ctx, error):

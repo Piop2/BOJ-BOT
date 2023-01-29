@@ -26,91 +26,91 @@ problem_log = get_logger("cmd.class_problem")
 class SearchClassProblem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.page = 0
-        self.first = True
-        self.embed: Embed
-        self.view: View
-        self.selects: Select
-        self.button1: Button
-        self.button2: Button
-        self.class_problem: list
-        self.class_id: int
-        self.interaction: Interaction
-        self.response: Interaction.InteractionResponse
-        self.img: bool
+        self.instance: dict[int, dict[str: any]] = {}
 
     @app_commands.command(name="class", description="search Class Problems with ID")
     @app_commands.describe(class_id="class ID registered on solved.ac(1~10)", img="whether to send image or not")
     async def search(self, interaction: Interaction, class_id: int, img: bool = False) -> None:
-        self.img = img
-        self.interaction = interaction
-        self.class_id = class_id
-        await self.interaction.response.defer()
+        if interaction.user.id in self.instance:
+            await self.instance[interaction.user.id]["interaction"].delete_original_response()
+        self.instance[interaction.user.id] = {"interaction": interaction, "page": 0, "first": True,
+                                              "img": img, "class_id": class_id}
+        await interaction.response.defer(ephemeral=True)
         try:
-            self.class_problem = solvedac.get_class_problem(class_id=self.class_id)
+            self.instance[interaction.user.id]["class_problem"] = solvedac.get_class_problem(class_id=class_id)
         except solvedac.ClassNotExistError:
             await interaction.followup.send(
-                f"ERROR class id '{self.class_id}' does not exist", ephemeral=False
+                f"ERROR class id '{class_id}' does not exist"
             )
-            problem_log.warning(f"class problem does not exist: {self.class_id}")
+            problem_log.warning(f"class problem does not exist: {class_id}")
             return
-        await self.setui()
-        problem_log.info(f"class problem found: {self.class_id}")
+        await self.set_ui(interaction.user.id)
+        problem_log.info(f"class problem found: {class_id}")
 
-
-    async def setui(self):
+    async def set_ui(self, id: int):
         class_icon = File(
-            f"resource/class/{3*self.class_id+1}.png", filename=f"{3*self.class_id+1}.png"
+            f"resource/class/{3*self.instance[id]['class_id']+1}.png",
+            filename=f"{3*self.instance[id]['class_id']+1}.png"
         )
-        self.selects = Select(
+        self.instance[id]['selects'] = Select(
             options=[
                 SelectOption(label=f"{i.id}. {i.title}", value=i.id)
-                for i in self.class_problem[self.page*25:self.page*25+25]
+                for i in self.instance[id]['class_problem']
+                [self.instance[id]['page']*25:self.instance[id]['page']*25+25]
             ]
         )
-        self.button1 = Button(label="다음 페이지", style=ButtonStyle.primary)
-        self.button2 = Button(label="이전 페이지", style=ButtonStyle.danger)
-        self.embed = Embed(title=f"Class {self.class_id}",
-            description='\n'.join([f"[{i.id}. {i.title}]({i.url})" for i in self.class_problem[self.page*25:self.page*25+25]])+f'\n\n{self.page+1}/{len(self.class_problem)//25+1}페이지')
-        self.embed.set_thumbnail(url=f"attachment://{3*self.class_id+1}.png")
+        self.instance[id]['button1'] = Button(label="다음 페이지", style=ButtonStyle.primary)
+        self.instance[id]['button2'] = Button(label="이전 페이지", style=ButtonStyle.danger)
+        self.instance[id]['embed'] = Embed(title=f"Class {self.instance[id]['class_id']}",
+                                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})"
+                                                                  for i in self.instance[id]['class_problem']
+                                                                  [self.instance[id]['page']*25:
+                                                                   self.instance[id]['page']*25+25]])
+                                                       + f'\n\n{self.instance[id]["page"]+1}/'
+                                                         f'{len(self.instance[id]["class_problem"])//25+1}페이지')
+        self.instance[id]['embed'].set_thumbnail(url=f"attachment://{3*self.instance[id]['class_id']+1}.png")
 
         async def select_callback(interaction: Interaction) -> None:
-            if self.img:
-                await send_problem_img(int(self.selects.values[0]), interaction)
+            if self.instance[interaction.user.id]['img']:
+                await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
+                                       interaction=interaction, ephemeral=True)
             else:
-                await send_problem(int(self.selects.values[0]), interaction)
+                await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
+                                   interaction=interaction, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
-            self.page += 1
-            await self.setui()
+            self.instance[interaction.user.id]['page'] += 1
+            await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
         async def button2_callback(interaction: Interaction):
-            self.page -= 1
-            await self.setui()
+            self.instance[interaction.user.id]['page'] -= 1
+            await self.set_ui(interaction.user.id)
             await interaction.response.defer()
 
-        self.selects.callback = select_callback
-        self.button1.callback = button1_callback
-        self.button2.callback = button2_callback
-        self.view = View()
-        self.view.add_item(self.selects)
-        if self.page != len(self.class_problem)//25:
-            self.view.add_item(self.button1)
-        if self.page != 0:
-            self.view.add_item(self.button2)
+        self.instance[id]['selects'].callback = select_callback
+        self.instance[id]['button1'].callback = button1_callback
+        self.instance[id]['button2'].callback = button2_callback
+        self.instance[id]['view'] = View()
+        self.instance[id]['view'].add_item(self.instance[id]['selects'])
+        if self.instance[id]['page'] != len(self.instance[id]['class_problem'])//25:
+            self.instance[id]['view'].add_item(self.instance[id]['button1'])
+        if self.instance[id]['page'] != 0:
+            self.instance[id]['view'].add_item(self.instance[id]['button2'])
 
-        if self.first == True:
-            await self.interaction.followup.send(embed=self.embed, view=self.view, file=class_icon, ephemeral=False)
-            self.first = False
+        if self.instance[id]['first']:
+            await self.instance[id]["interaction"].followup.send(embed=self.instance[id]['embed'],
+                                                                 view=self.instance[id]['view'],
+                                                                 file=class_icon)
+            self.instance[id]['first'] = False
         else:
-            await self.interaction.edit_original_response(embed=self.embed, view=self.view)
-
+            await self.instance[id]["interaction"].edit_original_response(embed=self.instance[id]['embed'],
+                                                                          view=self.instance[id]['view'])
 
     @search.error
     async def search_handler(self, ctx, error):
         problem_log.error(error)
-        await ctx.followup.send(content="예상치 못한 오류 발생", ephemeral=True)
+        await ctx.followup.send(content="예상치 못한 오류 발생")
         return
 
 

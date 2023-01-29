@@ -34,7 +34,6 @@ class Search(commands.Cog):
         except ValueError:
             await send_user(user_id=keyword, interaction=interaction)
 
-
     @search.autocomplete('keyword')
     async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
         suggestions = search_suggestion(query=current)
@@ -42,7 +41,6 @@ class Search(commands.Cog):
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
         suggestions = {**problems, **users}
         return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if True]
-
 
     @search.error
     async def search_handler(self, ctx, error):

@@ -16,14 +16,14 @@ from modules.draw.problem import make_thumbnail
 problem_log = get_logger("send.problem")
 
 
-async def send_problem(problem_id: int, interaction: Interaction) -> None:
-    await interaction.response.defer()
+async def send_problem(problem_id: int, interaction: Interaction, ephemeral: bool = False) -> None:
+    await interaction.response.defer(ephemeral=ephemeral)
 
     try:
         problem = solvedac.get_problem(problem_id=problem_id)
     except solvedac.ProblemNotExistError:
         await interaction.followup.send(
-            f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
+            f"ERROR problem id '{problem_id}' does not exist"
         )
         problem_log.warning(f"problem does not exist: {problem_id}")
         return
@@ -38,20 +38,20 @@ async def send_problem(problem_id: int, interaction: Interaction) -> None:
     embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
     await interaction.followup.send(
-        embed=embed, file=rank_icon, ephemeral=False
+        embed=embed, file=rank_icon, ephemeral=ephemeral
     )
     problem_log.info(f"problem found: {problem_id}")
     return
 
 
-async def send_problem_img(problem_id: int, interaction: Interaction) -> None:
-    await interaction.response.defer()
+async def send_problem_img(problem_id: int, interaction: Interaction, ephemeral: bool = False) -> None:
+    await interaction.response.defer(ephemeral=ephemeral)
 
     try:
         problem = solvedac.get_problem(problem_id=problem_id)
     except solvedac.ProblemNotExistError:
         await interaction.response.send_message(
-            f"ERROR problem id '{problem_id}' does not exist", ephemeral=False
+            f"ERROR problem id '{problem_id}' does not exist"
         )
         problem_log.warning(f"problem does not exist: {problem_id}")
         return
@@ -62,7 +62,7 @@ async def send_problem_img(problem_id: int, interaction: Interaction) -> None:
     embed.set_image(url=f"attachment://problem_{problem_id}.png")
 
     await interaction.followup.send(
-        embed=embed, file=file, ephemeral=False
+        embed=embed, file=file, ephemeral=ephemeral
     )
 
     problem_log.info(f"problem found: {problem_id}")

@@ -15,12 +15,14 @@ from utils.logger import get_logger
 user_log = get_logger("send.user")
 
 
-async def send_user(interaction: Interaction, user_id: str) -> None:
+async def send_user(interaction: Interaction, user_id: str, ephemeral: bool = False) -> None:
+    await interaction.response.defer(ephemeral=ephemeral)
+
     try:
         user = solvedac.get_user(user_id=user_id)
     except solvedac.UserNotExistError:
-        await interaction.response.send_message(
-            f"ERROR user id '{user_id}' does not exist", ephemeral=False
+        await interaction.followup.send(
+            f"ERROR user id '{user_id}' does not exist"
         )
         user_log.warning(f"user does not exist: {user_id}")
         return
@@ -63,8 +65,8 @@ async def send_user(interaction: Interaction, user_id: str) -> None:
     embed.add_field(name="기여 문제 수", value=user.vote_count, inline=True)
     embed.add_field(name="라이벌 수", value=user.rival_count, inline=True)
 
-    await interaction.response.send_message(
-        embed=embed, files=files, ephemeral=False
+    await interaction.followup.send(
+        embed=embed, files=files
     )
     user_log.info(f"user found: {user_id}")
     return
