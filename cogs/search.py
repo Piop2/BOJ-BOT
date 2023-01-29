@@ -42,7 +42,7 @@ class Search(commands.Cog):
         problems = {f'{i["id"]}': f'{i["id"]}. {i["title"]}' for i in suggestions["problems"]}
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
         suggestions = {**problems, **users}
-        search_log.info(f"search suggestions found: {current}")
+        search_log.info(f"search suggestions found: {interaction.user.id}, {current}")
         return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if True]
 
     @search.error
