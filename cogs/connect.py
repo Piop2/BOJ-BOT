@@ -34,7 +34,10 @@ class Login(commands.Cog):
     @app_commands.guilds(Object(id=conf["local"]["server"]))
     async def connect(self, interaction: Interaction, user_id: str = None) -> None:
         if interaction.user.id in self.interaction:
-            await self.interaction[interaction.user.id].delete_original_response()
+            try:
+                await self.interaction[interaction.user.id].delete_original_response()
+            except:
+                pass
         self.interaction[interaction.user.id] = interaction
         await interaction.response.defer(ephemeral=True)
         connect_log.info(f"connect command used: {interaction.user.id}, {user_id}")
