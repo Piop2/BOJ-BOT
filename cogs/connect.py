@@ -33,6 +33,8 @@ class Login(commands.Cog):
     @app_commands.describe(user_id="user ID on BOJ(blank to remove connect)")
     @app_commands.guilds(Object(id=conf["local"]["server"]))
     async def connect(self, interaction: Interaction, user_id: str = None) -> None:
+        if interaction.user.id in self.interaction:
+            await self.interaction[interaction.user.id].delete_original_response()
         self.interaction[interaction.user.id] = interaction
         await interaction.response.defer(ephemeral=True)
         connect_log.info(f"{interaction.user.name} used connect command")
