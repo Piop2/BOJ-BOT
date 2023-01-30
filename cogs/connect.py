@@ -14,7 +14,8 @@ from discord import Object
 import random
 
 import solvedac
-from modules.routine.role import get_user_info, remove_user
+from modules.routine.get import get_user_info
+from modules.routine.role import remove_user
 from modules.routine.role import set_member
 from modules.routine.role import change_role
 from modules.routine.role import get_tier_role

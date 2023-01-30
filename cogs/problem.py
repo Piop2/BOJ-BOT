@@ -13,6 +13,7 @@ from discord import Interaction
 import solvedac
 from utils.logger import get_logger
 from modules.draw.problem import make_thumbnail
+from modules.routine.get import get_user_info
 
 problem_log = get_logger("send.problem")
 
@@ -45,6 +46,12 @@ async def send_problem(problem_id: int, interaction: Interaction = None,
     embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
     if interaction is not None:
+        if get_user_info(interaction.user.id):
+            if problem_id in get_user_info(interaction.user.id)["solved"]:
+                embed.colour = 4429174
+            else:
+                embed.colour = 13389362
+
         await interaction.followup.send(
             embed=embed, file=rank_icon, ephemeral=ephemeral
         )

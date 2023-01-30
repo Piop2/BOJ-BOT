@@ -43,7 +43,7 @@ class Search(commands.Cog):
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
         suggestions = {**problems, **users}
         search_log.info(f"search suggestions found: {interaction.user.id}, {current}")
-        return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if True]
+        return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if current != ""]
 
     @search.error
     async def search_handler(self, ctx, error):

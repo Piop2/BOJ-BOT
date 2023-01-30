@@ -99,15 +99,6 @@ async def _update_role(member: Member, user_data: dict = None) -> None:
     return
 
 
-def get_user_info(user_id: int) -> dict | bool:
-    with open(USER_DATA_PATH, "r") as f:
-        user_data = json.load(f)
-    try:
-        return user_data[str(user_id)]
-    except KeyError:
-        return False
-
-
 async def remove_user(user: Member) -> None:
     with open(USER_DATA_PATH, "r") as f:
         user_data = json.load(f)
