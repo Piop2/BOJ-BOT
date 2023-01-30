@@ -20,6 +20,7 @@ from cogs.problem import send_problem_img
 import solvedac
 from solvedac.utils.rank import get_rank_id
 from utils.logger import get_logger
+from modules.routine.get import get_user_info
 
 tier_log = get_logger("cmd.tier_problem")
 
@@ -52,6 +53,9 @@ class SearchTierProblem(commands.Cog):
             )
             tier_log.warning(f"Tier problem does not exist: {tier_name}")
             return
+        solved = get_user_info(interaction.user.id)["solved"]
+        if solved:
+            self.instance[interaction.user.id]["tier_problem"] = [[i.id in solved, i] for i in self.instance[interaction.user.id]["tier_problem"]]
         await self.set_ui(interaction.user.id)
 
     @search.autocomplete('tier_name')
@@ -73,14 +77,15 @@ class SearchTierProblem(commands.Cog):
         )
         self.instance[id]['selects'] = Select(
             options=[
-                SelectOption(label=f"{i.id}. {i.title}", value=i.id)
+                SelectOption(label=f"{i[1].id}. {i[1].title}", value=i[1].id)
                 for i in self.instance[id]['tier_problem'][self.instance[id]['page']*25:self.instance[id]['page']*25+25]
             ]
         )
         self.instance[id]['button1'] = Button(label="다음 페이지", style=ButtonStyle.primary)
         self.instance[id]['button2'] = Button(label="이전 페이지", style=ButtonStyle.danger)
         self.instance[id]['embed'] = Embed(title=f"{self.instance[id]['tier_name']}",
-                                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})"
+                                           description='\n'.join([f"[{':green_circle: ' if i[0] else ''}"
+                                                                  f"{i[1].id}. {i[1].title}]({i[1].url})"
                                                                   for i in self.instance[id]['tier_problem']
                                                                   [self.instance[id]['page']*25:
                                                                    self.instance[id]['page']*25+25]])
