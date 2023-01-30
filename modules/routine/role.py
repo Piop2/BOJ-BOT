@@ -11,34 +11,32 @@ import solvedac
 from solvedac.user import User
 from config.config import conf
 from utils.logger import get_logger
+from modules.routine.solved_problem import get_new_solved
 
 USER_DATA_PATH = "data/user.json"
 USER_DATA_BACKUP_PATH = "data/user.json.back"
 
-connect_log = get_logger("tierUpdate")
+role_log = get_logger("roleUpdate")
 
 
 async def check_tier(bot: commands.Bot):
-    while True:
-        try:
-            with open(USER_DATA_PATH, "r") as f:
-                user_data = json.load(f)
-        except json.JSONDecodeError:
-            connect_log.warning("reading user.json failed. use backup file")
-            with open(USER_DATA_BACKUP_PATH, "r") as f:
-                user_data = json.load(f)
-            with open(USER_DATA_PATH, "w") as f:
-                json.dump(user_data, f, indent=4)
+    try:
+        with open(USER_DATA_PATH, "r") as f:
+            user_data = json.load(f)
+    except json.JSONDecodeError:
+        role_log.warning("reading user.json failed. use backup file")
+        with open(USER_DATA_BACKUP_PATH, "r") as f:
+            user_data = json.load(f)
+        with open(USER_DATA_PATH, "w") as f:
+            json.dump(user_data, f, indent=4)
 
-        guild = bot.get_guild(conf["local"]["server"])
-        coro = []
-        for member_id, user_data in user_data.items():
-            member = guild.get_member(int(member_id))
-            coro.append(_update_role(member=member, user_data=user_data))
-        await asyncio.gather(*coro)
-        connect_log.info("update all members' role")
-
-        await asyncio.sleep(conf["local"]["update_timer"])
+    guild = bot.get_guild(conf["local"]["server"])
+    coro = []
+    for member_id, user_data in user_data.items():
+        member = guild.get_member(int(member_id))
+        coro.append(_update_role(member=member, user_data=user_data))
+    await asyncio.gather(*coro)
+    role_log.info("updated all members' role")
 
 
 def get_tier_role(**kwargs) -> int:
@@ -56,7 +54,8 @@ async def set_member(member: Member, user: User) -> None:
 
     user_data[str(member.id)] = {
         "solvedAcId": user.name,
-        "latestTier": _get_tier(user=user)
+        "latestTier": _get_tier(user=user),
+        "solved": get_new_solved(user_id=user.name)
     }
 
     with open(USER_DATA_PATH, "w") as f:
@@ -79,7 +78,7 @@ async def _remove_role(member: Member, role_id: int) -> None:
     try:
         await member.remove_roles(Object(role_id))
     except Forbidden:
-        connect_log.warning(f"{member.name} does not have role ( id: {role_id} )")
+        role_log.warning(f"{member.name} does not have role ( id: {role_id} )")
     return
 
 
@@ -89,14 +88,14 @@ async def _update_role(member: Member, user_data: dict = None) -> None:
 
     tier = _get_tier(user=user)
     if latest_tier == tier:
-        connect_log.info(f"{member.name} tier update: None")
+        role_log.info(f"{member.name} tier update: None")
         return
 
     old_role = get_tier_role(tier=latest_tier)
     new_role = get_tier_role(user=user)
     await change_role(member=member, old_role=old_role, new_role=new_role)
     await set_member(member=member, user=user)
-    connect_log.info(f"{member.name} tier update: {latest_tier} -> {tier}")
+    role_log.info(f"{member.name} tier update: {latest_tier} -> {tier}")
     return
 
 

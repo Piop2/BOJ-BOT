@@ -8,7 +8,7 @@ from discord import Object
 from discord.ext import commands
 import pygame.font
 
-from modules.routine.role import check_tier
+from modules.routine.routine import routine
 from config.config import conf
 from utils.logger import get_logger
 
@@ -80,7 +80,7 @@ class Bot(commands.Bot):
             status=status_type,
         )
 
-        await check_tier(bot=self)
+        await routine(bot=self)
         return
 
 

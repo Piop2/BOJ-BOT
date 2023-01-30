@@ -2,7 +2,7 @@
   "version": 1,
   "formatters": {
     "simple": {
-      "format": "%(levelname)s %(name)s: %(message)s"
+      "format": "%(asctime)s %(levelname)s %(name)s: %(message)s"
     },
     "logFile": {
       "format": "%(asctime)s %(levelname)s %(name)s: %(message)s ( %(filename)s : %(lineno)d )"
@@ -54,7 +54,13 @@
     "cmd.connect": {
       "level": "INFO"
     },
-    "tierUpdate": {
+    "roleUpdate": {
+      "level": "INFO"
+    },
+    "solved_problem": {
+      "level": "INFO"
+    },
+    "routine": {
       "level": "INFO"
     }
   }

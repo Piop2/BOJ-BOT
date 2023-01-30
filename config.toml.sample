@@ -30,6 +30,8 @@ type = 1
 server =
 # private server tier update timer (sec)
 update_timer =
+# channel to send solved_problem
+solved_channel =
 # local.tier:  role id
 [local.tier]
 Unrated  =

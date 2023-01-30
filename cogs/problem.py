@@ -5,6 +5,7 @@
 # Param
 int problem_id: BOJ 에 등록된 문제 id
 """
+from discord.channel import TextChannel
 from discord import Embed
 from discord import File
 from discord import Interaction
@@ -16,16 +17,21 @@ from modules.draw.problem import make_thumbnail
 problem_log = get_logger("send.problem")
 
 
-async def send_problem(problem_id: int, interaction: Interaction, ephemeral: bool = False) -> None:
-    await interaction.response.defer(ephemeral=ephemeral)
+async def send_problem(problem_id: int, interaction: Interaction = None,
+                       channel: TextChannel = None, ephemeral: bool = False) -> None:
+    if interaction is not None:
+        await interaction.response.defer(ephemeral=ephemeral)
+    else:
+        pass
 
     try:
         problem = solvedac.get_problem(problem_id=problem_id)
         problem_log.info(f"problem found: {problem_id}")
     except solvedac.ProblemNotExistError:
-        await interaction.followup.send(
-            f"ERROR problem id '{problem_id}' does not exist"
-        )
+        if interaction is not None:
+            await interaction.followup.send(
+                f"ERROR problem id '{problem_id}' does not exist"
+            )
         problem_log.warning(f"problem does not exist: {problem_id}")
         return
 
@@ -38,9 +44,12 @@ async def send_problem(problem_id: int, interaction: Interaction, ephemeral: boo
     embed.set_thumbnail(url=f"attachment://level_{problem.level}.png")
     embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
-    await interaction.followup.send(
-        embed=embed, file=rank_icon, ephemeral=ephemeral
-    )
+    if interaction is not None:
+        await interaction.followup.send(
+            embed=embed, file=rank_icon, ephemeral=ephemeral
+        )
+    else:
+        await channel.send(embed=embed, file=rank_icon)
     problem_log.info(f"problem info sent: {problem_id}")
     return
 
