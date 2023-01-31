@@ -10,7 +10,8 @@ routine_log = get_logger("routine")
 
 
 async def routine(bot: commands.Bot):
-    await check_tier(bot=bot)
-    await check_solved_problem(bot=bot)
-    routine_log.info("routine finished")
-    await asyncio.sleep(conf["local"]["update_timer"])
+    while True:
+        await check_tier(bot=bot)
+        await check_solved_problem(bot=bot)
+        routine_log.info("routine finished")
+        await asyncio.sleep(conf["local"]["update_timer"])

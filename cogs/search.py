@@ -38,12 +38,14 @@ class Search(commands.Cog):
 
     @search.autocomplete('keyword')
     async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice]:
+        if current == "":
+            return []
         suggestions = search_suggestion(query=current)
         problems = {f'{i["id"]}': f'{i["id"]}. {i["title"]}' for i in suggestions["problems"]}
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
         suggestions = {**problems, **users}
         search_log.info(f"search suggestions found: {interaction.user.id}, {current}")
-        return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if current != ""]
+        return [app_commands.Choice(name=value, value=key) for key, value in suggestions.items() if True]
 
     @search.error
     async def search_handler(self, ctx, error):
