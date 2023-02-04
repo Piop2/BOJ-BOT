@@ -13,16 +13,13 @@ from discord import Interaction
 import solvedac
 from utils.logger import get_logger
 from modules.draw.problem import make_thumbnail
-from modules.routine.get import get_user_info
 
 problem_log = get_logger("send.problem")
 
 
 async def send_problem(problem_id: int, interaction: Interaction = None,
-                       channel: TextChannel = None, ephemeral: bool = False) -> None:
-    if interaction is not None:
-        await interaction.response.defer(ephemeral=ephemeral)
-    else:
+                       channel: TextChannel = None) -> tuple[Embed, File, int] | None:
+    if interaction is None:
         pass
 
     try:
@@ -46,15 +43,8 @@ async def send_problem(problem_id: int, interaction: Interaction = None,
     embed.set_footer(text="".join([f"#{i} " for i in problem.shorts]))
 
     if interaction is not None:
-        if get_user_info(interaction.user.id):
-            if problem_id in get_user_info(interaction.user.id)["solved"]:
-                embed.colour = 4429174
-            else:
-                embed.colour = 13389362
-
-        await interaction.followup.send(
-            embed=embed, file=rank_icon, ephemeral=ephemeral
-        )
+        a = (embed, rank_icon, problem_id)
+        return a
     else:
         await channel.send(embed=embed, file=rank_icon)
     problem_log.info(f"problem info sent: {problem_id}")

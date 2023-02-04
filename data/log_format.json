@@ -62,6 +62,9 @@
     },
     "routine": {
       "level": "INFO"
+    },
+    "user_data": {
+      "level": "INFO"
     }
   }
 }

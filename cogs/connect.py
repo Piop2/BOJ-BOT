@@ -14,7 +14,6 @@ from discord import Object
 import random
 
 import solvedac
-from modules.routine.get import get_user_info
 from modules.routine.role import remove_user
 from modules.routine.role import set_member
 from modules.routine.role import change_role
@@ -43,7 +42,7 @@ class Login(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         connect_log.info(f"connect command used: {interaction.user.id}, {user_id}")
 
-        info = get_user_info(interaction.user.id)
+        info = self.bot.user_data[interaction.user.id]
         if info and user_id is None:
 
             async def button3_callback(interaction: Interaction):

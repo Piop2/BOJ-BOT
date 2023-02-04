@@ -8,6 +8,7 @@ from discord import Object
 from discord.ext import commands
 import pygame.font
 
+from modules.routine.user import User
 from modules.routine.routine import routine
 from config.config import conf
 from utils.logger import get_logger
@@ -17,6 +18,7 @@ root_log = get_logger("root")
 
 class Bot(commands.Bot):
     def __init__(self):
+        self.user_data = User()
         intents = Intents.default()
         intents.members = True
         super().__init__(

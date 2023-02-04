@@ -32,7 +32,15 @@ class Search(commands.Cog):
             if img:
                 await send_problem_img(problem_id=keyword, interaction=interaction)
             else:
-                await send_problem(problem_id=keyword, interaction=interaction)
+                await interaction.response.defer()
+                embed, file, problem_id = await send_problem(problem_id=keyword, interaction=interaction)
+                if self.bot.user_data[interaction.user.id]:
+                    if problem_id in self.bot.user_data[interaction.user.id]["solved"]:
+                        embed.colour = 4429174
+                    else:
+                        embed.colour = 13389362
+                await interaction.followup.send(embed=embed, file=file)
+
         except ValueError:
             await send_user(user_id=keyword, interaction=interaction)
 

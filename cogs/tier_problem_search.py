@@ -20,7 +20,6 @@ from cogs.problem import send_problem_img
 import solvedac
 from solvedac.utils.rank import get_rank_id
 from utils.logger import get_logger
-from modules.routine.get import get_user_info
 
 tier_log = get_logger("cmd.tier_problem")
 
@@ -53,7 +52,7 @@ class SearchTierProblem(commands.Cog):
             )
             tier_log.warning(f"Tier problem does not exist: {tier_name}")
             return
-        solved = get_user_info(interaction.user.id)["solved"]
+        solved = self.bot.user_data[interaction.user.id]["solved"]
         if solved:
             self.instance[interaction.user.id]["tier_problem"] = [[i.id in solved, i] for i in self.instance[interaction.user.id]["tier_problem"]]
         await self.set_ui(interaction.user.id)
@@ -100,8 +99,16 @@ class SearchTierProblem(commands.Cog):
                 await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
                                        interaction=interaction, ephemeral=True)
             else:
-                await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
-                                   interaction=interaction, ephemeral=True)
+                await interaction.response.defer(ephemeral=True)
+                embed, file, problem_id = await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
+                                                             interaction=interaction)
+                if self.bot.user_data[interaction.user.id]:
+                    if problem_id in self.bot.user_data[interaction.user.id]["solved"]:
+                        embed.colour = 4429174
+                    else:
+                        embed.colour = 13389362
+                await interaction.followup.send(embed=embed, file=file)
+
 
         async def button1_callback(interaction: Interaction):
             tier_log.info(f"button1 clicked: {interaction.user.id}")
