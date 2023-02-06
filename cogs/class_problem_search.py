@@ -15,8 +15,8 @@ from discord.ui import Button, View
 from discord import ButtonStyle
 from discord import Interaction
 
-from cogs.problem import send_problem
-from cogs.problem import send_problem_img
+from modules.send.problem import send_problem
+from modules.send.problem import send_problem_img
 import solvedac
 from utils.logger import get_logger
 
@@ -50,6 +50,10 @@ class SearchClassProblem(commands.Cog):
             )
             class_log.warning(f"class problem does not exist: {class_id}")
             return
+        solved = self.bot.user_data[str(interaction.user.id)]["solved"]
+        if solved:
+            self.instance[interaction.user.id]["class_problem"] = \
+                [[i.id in solved, i] for i in self.instance[interaction.user.id]["class_problem"]]
         await self.set_ui(interaction.user.id)
 
     async def set_ui(self, id: int):
@@ -59,7 +63,7 @@ class SearchClassProblem(commands.Cog):
         )
         self.instance[id]['selects'] = Select(
             options=[
-                SelectOption(label=f"{i.id}. {i.title}", value=i.id)
+                SelectOption(label=f"{i[1].id}. {i[1].title}", value=i[1].id)
                 for i in self.instance[id]['class_problem']
                 [self.instance[id]['page']*25:self.instance[id]['page']*25+25]
             ]
@@ -67,7 +71,8 @@ class SearchClassProblem(commands.Cog):
         self.instance[id]['button1'] = Button(label="다음 페이지", style=ButtonStyle.primary)
         self.instance[id]['button2'] = Button(label="이전 페이지", style=ButtonStyle.danger)
         self.instance[id]['embed'] = Embed(title=f"Class {self.instance[id]['class_id']}",
-                                           description='\n'.join([f"[{i.id}. {i.title}]({i.url})"
+                                           description='\n'.join([f"[{':green_circle: ' if i[0] else ''}"
+                                                                  f"{i[1].id}. {i[1].title}]({i[1].url})"
                                                                   for i in self.instance[id]['class_problem']
                                                                   [self.instance[id]['page']*25:
                                                                    self.instance[id]['page']*25+25]])
@@ -82,8 +87,15 @@ class SearchClassProblem(commands.Cog):
                 await send_problem_img(int(self.instance[interaction.user.id]['selects'].values[0]),
                                        interaction=interaction, ephemeral=True)
             else:
-                await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
-                                   interaction=interaction, ephemeral=True)
+                await interaction.response.defer(ephemeral=True)
+                embed, file, problem_id = await send_problem(int(
+                    self.instance[interaction.user.id]['selects'].values[0]), interaction=interaction)
+                if self.bot.user_data[str(interaction.user.id)]:
+                    if problem_id in self.bot.user_data[str(interaction.user.id)]["solved"]:
+                        embed.colour = 4429174
+                    else:
+                        embed.colour = 13389362
+                await interaction.followup.send(embed=embed, file=file)
 
         async def button1_callback(interaction: Interaction):
             class_log.info(f"button1 clicked: {interaction.user.id}")

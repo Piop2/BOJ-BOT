@@ -11,9 +11,9 @@ from discord import Interaction
 
 from utils.logger import get_logger
 from solvedac.api.search_suggestion import search_suggestion
-from cogs.problem import send_problem
-from cogs.problem import send_problem_img
-from cogs.user import send_user
+from modules.send.problem import send_problem
+from modules.send.problem import send_problem_img
+from modules.send.user import send_user
 
 search_log = get_logger("cmd.search")
 
@@ -32,12 +32,22 @@ class Search(commands.Cog):
             if img:
                 await send_problem_img(problem_id=keyword, interaction=interaction)
             else:
-                await send_problem(problem_id=keyword, interaction=interaction)
+                await interaction.response.defer()
+                embed, file, problem_id = await send_problem(problem_id=keyword, interaction=interaction)
+                if self.bot.user_data[str(interaction.user.id)]:
+                    if problem_id in self.bot.user_data[str(interaction.user.id)]["solved"]:
+                        embed.colour = 4429174
+                    else:
+                        embed.colour = 13389362
+                await interaction.followup.send(embed=embed, file=file)
+
         except ValueError:
             await send_user(user_id=keyword, interaction=interaction)
 
     @search.autocomplete('keyword')
     async def search_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice]:
+        if current == "":
+            return []
         suggestions = search_suggestion(query=current)
         problems = {f'{i["id"]}': f'{i["id"]}. {i["title"]}' for i in suggestions["problems"]}
         users = {i["handle"]: f'User {i["handle"]}' for i in suggestions["users"]}
