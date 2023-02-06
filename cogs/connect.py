@@ -38,11 +38,11 @@ class Login(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         connect_log.info(f"connect command used: {interaction.user.id}, {user_id}")
 
-        info = self.bot.user_data[interaction.user.id]
+        info = self.bot.user_data[str(interaction.user.id)]
         if info and user_id is None:
 
             async def button3_callback(interaction: Interaction):
-                self.bot.user_data.delete_user(interaction.user.id)
+                del self.bot.user_data.delete_user[str(interaction.user.id)]
                 await self.bot.routine.role.update_role(interaction.user)
                 embed = Embed(
                     title=f'{interaction.user.name}님과 {info["solvedAcId"]}님의 연결이 해제되었습니다'

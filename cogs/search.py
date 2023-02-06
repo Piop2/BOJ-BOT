@@ -34,8 +34,8 @@ class Search(commands.Cog):
             else:
                 await interaction.response.defer()
                 embed, file, problem_id = await send_problem(problem_id=keyword, interaction=interaction)
-                if self.bot.user_data[interaction.user.id]:
-                    if problem_id in self.bot.user_data[interaction.user.id]["solved"]:
+                if self.bot.user_data[str(interaction.user.id)]:
+                    if problem_id in self.bot.user_data[str(interaction.user.id)]["solved"]:
                         embed.colour = 4429174
                     else:
                         embed.colour = 13389362

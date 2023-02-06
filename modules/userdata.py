@@ -17,11 +17,19 @@ class UserData:
     def __iter__(self):
         return self._data.items()
 
-    def __getitem__(self, user_id: int):
+    def __getitem__(self, user_id: str):
         if user_id not in self:
             return False
         else:
-            return self._data[str(user_id)]
+            return self._data[user_id]
+
+    def __setitem__(self, user_id: str, value):
+        self._data[user_id] = value
+        self.save_file()
+
+    def __delitem__(self, user_id: str):
+        del self._data[user_id]
+        self.save_file()
 
     def __contains__(self, user_id: int):
         return user_id in self._data
@@ -42,7 +50,7 @@ class UserData:
 
     def update_user(self, user_id: int, solved_id: str = None, latest_tier: str = None, solved: list = None):
         if solved_id is not None:
-            self._data[str(user_id)]["solved_id"] = solved_id
+            self._data[str(user_id)]["solvedAcId"] = solved_id
         if latest_tier is not None:
             self._data[str(user_id)]["latest_tier"] = latest_tier
         if solved is not None:
@@ -59,7 +67,3 @@ class UserData:
         with open(self.data_back_path, "w") as f:
             json.dump(self._data, f, indent=4)
         user_data_log.info('saved backup file')
-
-    def delete_user(self, user_id: int):
-        del self._data[str(user_id)]
-        self.save_file()

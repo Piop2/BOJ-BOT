@@ -19,6 +19,6 @@ class Routine:
         while True:
             await self.role.check_tier()
             await self.solved_problem.check_solved_problem()
-            self.bot.user_data.save_backup_file()
+            await self.bot.user_data.save_backup_file()
             routine_log.info("routine finished")
             await asyncio.sleep(conf["local"]["update_timer"])

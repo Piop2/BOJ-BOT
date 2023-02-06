@@ -35,8 +35,8 @@ class Role:
         return conf["local"]["tier"][tier]
 
     async def set_member(self, member: Member, user: User) -> None:
-        self.user_data.update_user(member.id, user.name, self._get_user_tier(user=user),
-                                   self.bot.routine.solved_problem.get_new_solved(user_id=user.name))
+        self.user_data[str(member.id)] = {"solvedAcId": user.name, "latestTier": self._get_user_tier(user=user),
+                                          "solved": self.bot.routine.solved_problem.get_new_solved(user_id=user.name)}
         return
 
     @staticmethod
@@ -59,8 +59,9 @@ class Role:
         return
 
     async def update_role(self, member: Member) -> None:
-        user = solvedac.get_user(user_id=self.user_data[member.id]["solvedAcId"])
-        latest_tier = self.user_data[member.id]["latestTier"]
+        print(self.user_data[str(member.id)])
+        user = solvedac.get_user(user_id=self.user_data[str(member.id)]["solvedAcId"])
+        latest_tier = self.user_data[str(member.id)]["latestTier"]
 
         tier = self._get_user_tier(user=user)
         if latest_tier == tier:

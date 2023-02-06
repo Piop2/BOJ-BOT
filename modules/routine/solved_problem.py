@@ -17,10 +17,8 @@ class SolvedProblem:
 
     async def check_solved_problem(self):
         channel = self.bot.get_channel(conf["local"]["solved_channel"])
-        coro = []
         for member_id in self.user_data.keys():
-            coro.append(self._send_solved(member_id=member_id, channel=channel))
-        await asyncio.gather(*coro)
+            await asyncio.wait_for(self._send_solved(member_id=member_id, channel=channel), timeout=100)
         solved_log.info("sent all members' solved problem")
 
     async def _send_solved(self, member_id: int, channel: discord.channel.TextChannel) -> None:

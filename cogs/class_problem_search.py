@@ -50,7 +50,7 @@ class SearchClassProblem(commands.Cog):
             )
             class_log.warning(f"class problem does not exist: {class_id}")
             return
-        solved = self.bot.user_data[interaction.user.id]["solved"]
+        solved = self.bot.user_data[str(interaction.user.id)]["solved"]
         if solved:
             self.instance[interaction.user.id]["class_problem"] = \
                 [[i.id in solved, i] for i in self.instance[interaction.user.id]["class_problem"]]
@@ -90,8 +90,8 @@ class SearchClassProblem(commands.Cog):
                 await interaction.response.defer(ephemeral=True)
                 embed, file, problem_id = await send_problem(int(
                     self.instance[interaction.user.id]['selects'].values[0]), interaction=interaction)
-                if self.bot.user_data[interaction.user.id]:
-                    if problem_id in self.bot.user_data[interaction.user.id]["solved"]:
+                if self.bot.user_data[str(interaction.user.id)]:
+                    if problem_id in self.bot.user_data[str(interaction.user.id)]["solved"]:
                         embed.colour = 4429174
                     else:
                         embed.colour = 13389362
