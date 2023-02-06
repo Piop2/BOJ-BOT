@@ -22,7 +22,7 @@ def get_tier_problem(tier_id: int) -> list[Problem, ...]:
     return problems
 
 
-def get_user(user_id: str) -> User:
+def get_user(user_id: str = None) -> User:
     return User.load_json(json=solvedac.api.user.show_user(user_id=user_id))
 
 

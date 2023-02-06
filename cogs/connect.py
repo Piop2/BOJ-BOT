@@ -14,10 +14,6 @@ from discord import Object
 import random
 
 import solvedac
-from modules.routine.role import remove_user
-from modules.routine.role import set_member
-from modules.routine.role import change_role
-from modules.routine.role import get_tier_role
 from config.config import conf
 from utils.logger import get_logger
 
@@ -46,7 +42,8 @@ class Login(commands.Cog):
         if info and user_id is None:
 
             async def button3_callback(interaction: Interaction):
-                await remove_user(interaction.user)
+                self.bot.user_data.delete_user(interaction.user.id)
+                await self.bot.routine.role.update_role(interaction.user)
                 embed = Embed(
                     title=f'{interaction.user.name}님과 {info["solvedAcId"]}님의 연결이 해제되었습니다'
                 )
@@ -127,9 +124,9 @@ class Login(commands.Cog):
                                 프로필의 상태메시지는 원래대로 돌려놓으셔도 좋습니다.",
                 )
                 connect_log.info(f"{interaction.user.name} connected to {user.name}")
-                await set_member(member=interaction.user, user=user)
-                await change_role(
-                    member=interaction.user, new_role=get_tier_role(user=user)
+                await self.bot.routine.role.set_member(member=interaction.user, user=user)
+                await self.bot.routine.role.change_role(
+                    member=interaction.user, new_role=self.bot.routine.role.get_tier_role(user=user)
                 )
                 await self.interaction[interaction.user.id].edit_original_response(embed=embed, view=None)
             else:

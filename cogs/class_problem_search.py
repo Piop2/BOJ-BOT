@@ -15,8 +15,8 @@ from discord.ui import Button, View
 from discord import ButtonStyle
 from discord import Interaction
 
-from cogs.problem import send_problem
-from cogs.problem import send_problem_img
+from modules.send.problem import send_problem
+from modules.send.problem import send_problem_img
 import solvedac
 from utils.logger import get_logger
 
@@ -52,7 +52,8 @@ class SearchClassProblem(commands.Cog):
             return
         solved = self.bot.user_data[interaction.user.id]["solved"]
         if solved:
-            self.instance[interaction.user.id]["class_problem"] = [[i.id in solved, i] for i in self.instance[interaction.user.id]["class_problem"]]
+            self.instance[interaction.user.id]["class_problem"] = \
+                [[i.id in solved, i] for i in self.instance[interaction.user.id]["class_problem"]]
         await self.set_ui(interaction.user.id)
 
     async def set_ui(self, id: int):
@@ -87,8 +88,8 @@ class SearchClassProblem(commands.Cog):
                                        interaction=interaction, ephemeral=True)
             else:
                 await interaction.response.defer(ephemeral=True)
-                embed, file, problem_id = await send_problem(int(self.instance[interaction.user.id]['selects'].values[0]),
-                                   interaction=interaction)
+                embed, file, problem_id = await send_problem(int(
+                    self.instance[interaction.user.id]['selects'].values[0]), interaction=interaction)
                 if self.bot.user_data[interaction.user.id]:
                     if problem_id in self.bot.user_data[interaction.user.id]["solved"]:
                         embed.colour = 4429174

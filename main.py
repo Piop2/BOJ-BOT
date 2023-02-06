@@ -1,4 +1,4 @@
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from discord import Activity
 from discord import ActivityType
@@ -8,8 +8,8 @@ from discord import Object
 from discord.ext import commands
 import pygame.font
 
-from modules.routine.user import User
-from modules.routine.routine import routine
+from modules.userdata import UserData
+from modules.routine.routine import Routine
 from config.config import conf
 from utils.logger import get_logger
 
@@ -18,7 +18,8 @@ root_log = get_logger("root")
 
 class Bot(commands.Bot):
     def __init__(self):
-        self.user_data = User()
+        self.user_data = UserData()
+        self.routine = Routine(self)
         intents = Intents.default()
         intents.members = True
         super().__init__(
@@ -82,7 +83,7 @@ class Bot(commands.Bot):
             status=status_type,
         )
 
-        await routine(bot=self)
+        await self.routine.routine()
         return
 
 

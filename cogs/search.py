@@ -11,9 +11,9 @@ from discord import Interaction
 
 from utils.logger import get_logger
 from solvedac.api.search_suggestion import search_suggestion
-from cogs.problem import send_problem
-from cogs.problem import send_problem_img
-from cogs.user import send_user
+from modules.send.problem import send_problem
+from modules.send.problem import send_problem_img
+from modules.send.user import send_user
 
 search_log = get_logger("cmd.search")
 
