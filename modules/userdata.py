@@ -4,14 +4,15 @@ from utils.logger import get_logger
 
 user_data_log = get_logger("user_data")
 
+DATA_PATH = "data/user.json"
+DATA_BACK_PATH = "data/user.json.back"
+
 
 class UserData:
 
     _data: dict
 
     def __init__(self):
-        self.data_path = "data/user.json"
-        self.data_back_path = "data/user.json.back"
         self.load_data()
 
     def __iter__(self):
@@ -39,13 +40,13 @@ class UserData:
 
     def load_data(self):
         try:
-            with open(self.data_path, "r") as f:
+            with open(DATA_PATH, "r") as f:
                 self._data = json.load(f)
         except json.JSONDecodeError:
             self.use_backup_file()
 
     def save_file(self):
-        with open(self.data_path, "w") as f:
+        with open(DATA_PATH, "w") as f:
             json.dump(self._data, f, indent=4)
 
     def update_user(self, user_id: int, solved_id: str = None, latest_tier: str = None, solved: list = None):
@@ -59,16 +60,16 @@ class UserData:
 
     def use_backup_file(self):
         user_data_log.warning('loading data failed. using backup file')
-        with open(self.data_back_path, "r") as f:
+        with open(DATA_BACK_PATH, "r") as f:
             self._data = json.load(f)
         self.save_file()
 
     async def save_backup_file(self):
         try:
-            with open(self.data_path, "r") as f:
+            with open(DATA_PATH, "r") as f:
                 json.load(f)
         except json.JSONDecodeError:
             return
-        with open(self.data_back_path, "w") as f:
+        with open(DATA_BACK_PATH, "w") as f:
             json.dump(self._data, f, indent=4)
         user_data_log.info('saved backup file')
