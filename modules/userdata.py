@@ -64,6 +64,11 @@ class UserData:
         self.save_file()
 
     async def save_backup_file(self):
+        try:
+            with open(self.data_path, "r") as f:
+                json.load(f)
+        except json.JSONDecodeError:
+            return
         with open(self.data_back_path, "w") as f:
             json.dump(self._data, f, indent=4)
         user_data_log.info('saved backup file')
