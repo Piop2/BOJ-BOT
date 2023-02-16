@@ -42,8 +42,8 @@ class Login(commands.Cog):
         if info and user_id is None:
 
             async def button3_callback(interaction: Interaction):
-                del self.bot.user_data.delete_user[str(interaction.user.id)]
-                await self.bot.routine.role.update_role(interaction.user)
+                await self.bot.routine.role._remove_role(interaction.user, self.bot.routine.role.get_tier_role(tier=self.bot.user_data[str(interaction.user.id)]["latestTier"]))
+                del self.bot.user_data[str(interaction.user.id)]
                 embed = Embed(
                     title=f'{interaction.user.name}님과 {info["solvedAcId"]}님의 연결이 해제되었습니다'
                 )
