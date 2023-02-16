@@ -50,10 +50,14 @@ class SearchClassProblem(commands.Cog):
             )
             class_log.warning(f"class problem does not exist: {class_id}")
             return
-        solved = self.bot.user_data[str(interaction.user.id)]["solved"]
+        solved = self.bot.user_data[str(interaction.user.id)]
         if solved:
+            solved = solved["solved"]
             self.instance[interaction.user.id]["class_problem"] = \
                 [[i.id in solved, i] for i in self.instance[interaction.user.id]["class_problem"]]
+        else:
+            self.instance[interaction.user.id]["class_problem"] = \
+                [[False, i] for i in self.instance[interaction.user.id]["class_problem"]]
         await self.set_ui(interaction.user.id)
 
     async def set_ui(self, id: int):
@@ -95,7 +99,7 @@ class SearchClassProblem(commands.Cog):
                         embed.colour = 4429174
                     else:
                         embed.colour = 13389362
-                await interaction.followup.send(embed=embed, file=file)
+                await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
             class_log.info(f"button1 clicked: {interaction.user.id}")

@@ -59,7 +59,6 @@ class Role:
         return
 
     async def update_role(self, member: Member) -> None:
-        print(self.user_data[str(member.id)])
         user = solvedac.get_user(user_id=self.user_data[str(member.id)]["solvedAcId"])
         latest_tier = self.user_data[str(member.id)]["latestTier"]
 

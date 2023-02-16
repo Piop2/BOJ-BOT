@@ -52,10 +52,14 @@ class SearchTierProblem(commands.Cog):
             )
             tier_log.warning(f"Tier problem does not exist: {tier_name}")
             return
-        solved = self.bot.user_data[str(interaction.user.id)]["solved"]
+        solved = self.bot.user_data[str(interaction.user.id)]
         if solved:
+            solved = solved["solved"]
             self.instance[interaction.user.id]["tier_problem"] = \
                 [[i.id in solved, i] for i in self.instance[interaction.user.id]["tier_problem"]]
+        else:
+            self.instance[interaction.user.id]["tier_problem"] = \
+                [[False, i] for i in self.instance[interaction.user.id]["tier_problem"]]
         await self.set_ui(interaction.user.id)
 
     @search.autocomplete('tier_name')
@@ -108,7 +112,7 @@ class SearchTierProblem(commands.Cog):
                         embed.colour = 4429174
                     else:
                         embed.colour = 13389362
-                await interaction.followup.send(embed=embed, file=file)
+                await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
         async def button1_callback(interaction: Interaction):
             tier_log.info(f"button1 clicked: {interaction.user.id}")
